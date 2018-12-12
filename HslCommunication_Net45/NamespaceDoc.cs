@@ -7,16 +7,19 @@ using HslCommunication.Core;
 namespace HslCommunication
 {
     /// <summary>
-    /// 一个包含网络通讯库，PLC访问库，日志库，多线程处理，Modbus服务区客户端，数据转换，版本类，基础控件等工具库
+    /// 一个工业物联网的底层架构框架，专注于底层的技术通信及跨平台，跨语言通信功能，实现各种主流的PLC数据读写，实现modbus的各种协议读写等等，
+    /// 支持快速搭建工业上位机软件，组态软件，SCADA软件，工厂MES系统，助力企业工业4.0腾飞，实现智能制造，智慧工厂的目标。
     /// <br /><br />
     /// 本组件免费开源，使用之前请认真的阅读本API文档，对于本文档中警告部分的内容务必理解，部署生产之前请详细测试，如果在测试的过程中，
     /// 发现了BUG，或是有问题的地方，欢迎联系作者进行修改，或是直接在github上进行提问。统一声明：对于操作设备造成的任何损失，作者概不负责。
+    /// <br /><br />
+    /// 官方网站：<a href="http://www.hslcommunication.cn/">http://www.hslcommunication.cn/</a>，包含组件的在线API地址以及一个MES DEMO的项目展示。
     /// <br /><br />
     /// <note type="important">
     /// 本组件的目标是集成一个框架，统一所有的设备读写方法，抽象成统一的接口<see cref="IReadWriteNet"/>，对于上层操作只需要关注地址，读取类型即可，另一个目标是使用本框架轻松实现C#后台+C#客户端+web浏览器+android手机的全方位功能实现。
     /// </note>
     /// <br /><br />
-    /// 本库提供了C#版本和java版本，java版本的使用和C#几乎是一模一样的。
+    /// 本库提供了C#版本和java版本和python版本，java，python版本的使用和C#几乎是一模一样的，都是可以相互通讯的。
     /// </summary>
     /// <remarks>
     /// 本软件著作权归Richard.Hu所有，开源项目地址：<a href="https://github.com/dathlin/HslCommunication">https://github.com/dathlin/HslCommunication</a>  开源协议：LGPL-3.0
@@ -372,6 +375,177 @@ namespace HslCommunication
     ///         <list type="bullet">
     ///             <item>API文档中西门子FW协议示例代码修复。</item>
     ///             <item>modbus-rtu修复读取线圈和输入线圈的值错误的bug。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-08-23" version="5.2.2" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>Demo中三菱A-1E帧，修复bool读取显示失败的BUG。</item>
+    ///             <item>数据订阅类客户端连接上服务器后，服务器立即推送一次。</item>
+    ///             <item>串口设备基类代码提炼，提供了多种数据类型的读写支持。</item>
+    ///             <item>仪表盘新增属性IsBigSemiCircle，设置为true之后，仪表盘可显示大于半圆的视图。</item>
+    ///             <item>提供了一个新的三菱串口类，用于采集FX系列的PLC，MelsecFxSerial</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-08-24" version="5.2.3" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>修复双模式基类的一个bug，支持不接受反馈数据。</item>
+    ///             <item>修复三菱串口类的读写bug，包括写入位，和读取字和位。</item>
+    ///             <item>相关代码重构优化。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-09-08" version="5.3.0" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>串口基类接收数据优化，保证接收一次完整的数据内容。</item>
+    ///             <item>新增一个容器罐子的控件，可以调整背景颜色。</item>
+    ///             <item>OperateResult成功时的错误码调整为0。</item>
+    ///             <item>修复modbus-tcp及modbus-rtu读取coil及discrete的1个位时解析异常的bug。</item>
+    ///             <item>授权类公开一个属性，终极秘钥的属性，感谢 洛阳-LYG 的建议。</item>
+    ///             <item>修复transbool方法在特殊情况下的bug</item>
+    ///             <item>NetworkDeviceBase 写入的方法设置为了虚方法，允许子类进行重写。</item>
+    ///             <item>SoftBasic: 新增三个字节处理的方法，移除前端字节，移除后端字节，移除两端字节。</item>
+    ///             <item>新增串口应用的LRC校验方法。还未实际测试。</item>
+    ///             <item>Siemens的s7协议支持V区自动转换，方便数据读取。</item>
+    ///             <item>新增ab plc的类AllenBradleyNet，已测试读写，bool写入仍存在一点问题。</item>
+    ///             <item>新增modbus-Ascii类，该类库还未仔细测试。</item>
+    ///             <item>埃夫特机器人更新，适配最新版本数据采集。</item>
+    ///             <item>其他的代码优化，重构精简</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-09-10" version="5.3.1" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>修复埃夫特机器人读取数据的bug，已测试通过。</item>
+    ///             <item>ByteTransform数据转换层新增一个DataFormat属性，可选ABCD,BADC,CDAB,DCBA</item>
+    ///             <item>三个modbus协议均适配了ByteTransform并提供了直接修改的属性，默认ABCD</item>
+    ///             <item>注意：如果您的旧项目使用的Modbus类，请务必重新测试适配。给你带来的不便，敬请谅解。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-09-21" version="5.3.2" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>所有显示字符串支持中英文，支持切换，默认为系统语言。</item>
+    ///             <item>Json组件依赖设置为不依赖指定版本。</item>
+    ///             <item>modbus-ascii类库测试通过。</item>
+    ///             <item>新增松下的plc串口读写类，还未测试。</item>
+    ///             <item>西门子s7类写入byte数组长度不受限制，原先大概250个字节左右。</item>
+    ///             <item>demo界面进行了部分的中英文适配。</item>
+    ///             <item>OperateResult类新增了一些额外的构造方法。</item>
+    ///             <item>SoftBasic新增了几个字节数组操作相关的通用方法。</item>
+    ///             <item>其他大量的细节的代码优化，重构。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-09-27" version="5.3.3" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>DeviceNet层添加异步的API，支持async+await调用。</item>
+    ///             <item>java修复西门子的写入成功却提示失败的bug。</item>
+    ///             <item>java代码重构，和C#基本保持一致。</item>
+    ///             <item>python版本发布，支持三菱，西门子，欧姆龙，modbus，数据订阅，同步访问。</item>
+    ///             <item>其他的代码优化，重构精简。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-10-20" version="5.4.0" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>python和java的代码优化，完善，添加三菱A-1E类。</item>
+    ///             <item>修复仪表盘控件，最大值小于0会产生的特殊Bug。</item>
+    ///             <item>NetSimplifyClient: 提供高级.net的异步版本方法。</item>
+    ///             <item>serialBase: 新增初始化和结束的保护方法，允许重写实现额外的操作。</item>
+    ///             <item>softBuffer: 添加一个线程安全的buffer内存读写。</item>
+    ///             <item>添加西门子ppi协议类，针对s7-200，需要最终测试。</item>
+    ///             <item>Panasonic: 修复松下plc的读取读取数据异常。</item>
+    ///             <item>修复fx协议批量读取bool时意外的Bug。</item>
+    ///             <item>NetSimplifyClient: 新增带用户int数据返回的读取接口。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-10-24" version="5.4.1" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>新增一个温度采集模块的类，基于modbus-rtu实现，阿尔泰科技发展有限公司的DAM3601模块。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-10-25" version="5.4.2" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>三菱的mc协议新增支持读取ZR文件寄存器功能。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-10-30" version="5.4.3" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>修复AB PLC的bool和byte写入失败的bug，感谢 北京-XLang 提供的思路。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-11-1" version="5.5.0" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>新增西门子PPI通讯类库，支持200，200smart等串口通信，感谢 合肥-加劲 和 江阴-  ∮溪风-⊙_⌒ 的测试</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-11-5" version="5.5.1" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>新增三菱计算机链接协议通讯库，支持485组网，有效距离达50米，感谢珠海-刀客的测试。</item>
+    ///             <item>串口协议的基类提供了检测当前串口是否处于打开的方法接口。</item>
+    ///             <item>西门子S7协议新增槽号为3的s7-400的PLC选项，等待测试。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-11-9" version="5.5.2" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>西门子PPI写入bool方法名重载到了Write方法里。</item>
+    ///             <item>松下写入bool方法名重载到了Write方法里。</item>
+    ///             <item>修复CRC16验证码在某些特殊情况下的溢出bug。</item>
+    ///             <item>西门子类添加槽号和机架号属性，只针对400PLC有效，初步测试可读写。</item>
+    ///             <item>ab plc支持对数组的读写操作，支持数组长度为0-246，超过246即失败。</item>
+    ///             <item>三菱的编程口协议修复某些特殊情况读取失败，却提示成功的bug。</item>
+    ///             <item>串口基类提高缓存空间到4096，并在数据交互时捕获COM口的异常。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-11-16" version="5.6.0" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>修复欧姆龙的数据格式错误，修改为CDAB。</item>
+    ///             <item>新增一个瓶子的控件。</item>
+    ///             <item>新增一个管道的控件。</item>
+    ///             <item>初步新增一个redis的类，初步实现了读写关键字。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-11-21" version="5.6.1" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>AB PLC读取数组过长时提示错误信息。</item>
+    ///             <item>正式发布redis客户端，支持一些常用的操作，并提供一个浏览器。博客：https://www.cnblogs.com/dathlin/p/9998013.html </item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-11-24" version="5.6.2" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>曲线控件的曲线支持隐藏其中的一条或是多条曲线，可以用来实现手动选择显示曲线的功能。</item>
+    ///             <item>Redis功能块代码优化，支持通知服务器进行数据快照保存，包括同步异步。</item>
+    ///             <item>Redis新增订阅客户端类，可以实现订阅一个或是多个频道数据。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-11-30" version="5.6.3" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>串口数据接收的底层机制重新设计。</item>
+    ///             <item>串口底层循环验证缓冲区是否有数据的间隔可更改，默认20ms。</item>
+    ///             <item>串口底层新增一个清除缓冲区数据的方法。</item>
+    ///             <item>串口底层新增一个属性，用于配置是否在每次读写前清除缓冲区的脏数据。</item>
+    ///             <item>新增了一个SharpList类，用于超高性能的管理固定长度的数组。博客：https://www.cnblogs.com/dathlin/p/10042801.html </item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-12-3" version="5.6.4" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>Networkbase: 接收方法的一个多余对象删除。</item>
+    ///             <item>修复UserDrum控件的默认的text生成，及复制问题。</item>
+    ///             <item>UserDrum修复属性在设计界面没有注释的bug。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-12-5" version="5.6.5" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>修复Demo程序在某些特殊情况下无法在线更新的bug。</item>
+    ///             <item>修复曲线控件隐藏曲线时在某些特殊情况的不隐藏的bug。</item>
+    ///             <item>modbus协议无论读写都支持富地址格式。</item>
+    ///             <item>修复连接池清理资源的一个bug，感谢 泉州-邱蕃金</item>
+    ///             <item>修复java的modbus代码读取线圈异常的操作。</item>
+    ///             <item>Demo程序新增免责条款。</item>
+    ///         </list>
+    ///     </revision>
+    ///     <revision date="2018-12-11" version="5.6.6" author="Richard.Hu">
+    ///         <list type="bullet">
+    ///             <item>修复redis客户端对键值进行自增自减指令操作时的类型错误bug。</item>
+    ///             <item>修复redis客户端对哈希值进行自增自减指令操作时的类型错误bug。</item>
+    ///             <item>推送的客户端可选委托或是事件的方式，方便labview调用。</item>
+    ///             <item>推送的客户端修复当服务器的关键字不存在时连接未关闭的Bug。</item>
+    ///             <item>Demo程序里，欧姆龙测试界面新增数据格式功能。</item>
     ///         </list>
     ///     </revision>
     /// </revisionHistory>

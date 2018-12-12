@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\HslCommunication.xml</DocumentationFile>
@@ -26,7 +26,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\HslCommunication.xml</DocumentationFile>
@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net35\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -95,6 +96,9 @@
       <Link>BasicFramework\FormSupport.designer.cs</Link>
       <DependentUpon>FormSupport.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\HslCommunication_Net45\BasicFramework\SharpList.cs">
+      <Link>BasicFramework\SharpList.cs</Link>
+    </Compile>
     <Compile Include="..\HslCommunication_Net45\BasicFramework\SoftAnimation.cs">
       <Link>BasicFramework\SoftAnimation.cs</Link>
     </Compile>
@@ -106,6 +110,9 @@
     </Compile>
     <Compile Include="..\HslCommunication_Net45\BasicFramework\SoftBasic.cs">
       <Link>BasicFramework\SoftBasic.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\BasicFramework\SoftBuffer.cs">
+      <Link>BasicFramework\SoftBuffer.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\BasicFramework\SoftCache.cs">
       <Link>BasicFramework\SoftCache.cs</Link>
@@ -137,6 +144,14 @@
     <Compile Include="..\HslCommunication_Net45\BasicFramework\SoftZipped.cs">
       <Link>BasicFramework\SoftZipped.cs</Link>
     </Compile>
+    <Compile Include="..\HslCommunication_Net45\Controls\UserBottle.cs">
+      <Link>Controls\UserBottle.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Controls\UserBottle.designer.cs">
+      <Link>Controls\UserBottle.designer.cs</Link>
+      <DependentUpon>UserBottle.cs</DependentUpon>
+    </Compile>
     <Compile Include="..\HslCommunication_Net45\Controls\UserButton.cs">
       <Link>Controls\UserButton.cs</Link>
       <SubType>UserControl</SubType>
@@ -160,6 +175,14 @@
     <Compile Include="..\HslCommunication_Net45\Controls\UserCurve.designer.cs">
       <Link>Controls\UserCurve.designer.cs</Link>
       <DependentUpon>UserCurve.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Controls\UserDrum.cs">
+      <Link>Controls\UserDrum.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Controls\UserDrum.designer.cs">
+      <Link>Controls\UserDrum.designer.cs</Link>
+      <DependentUpon>UserDrum.cs</DependentUpon>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Controls\UserGaugeChart.cs">
       <Link>Controls\UserGaugeChart.cs</Link>
@@ -185,6 +208,14 @@
       <Link>Controls\UserPieChart.designer.cs</Link>
       <DependentUpon>UserPieChart.cs</DependentUpon>
     </Compile>
+    <Compile Include="..\HslCommunication_Net45\Controls\UserPipe.cs">
+      <Link>Controls\UserPipe.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Controls\UserPipe.designer.cs">
+      <Link>Controls\UserPipe.designer.cs</Link>
+      <DependentUpon>UserPipe.cs</DependentUpon>
+    </Compile>
     <Compile Include="..\HslCommunication_Net45\Controls\UserSwitch.cs">
       <Link>Controls\UserSwitch.cs</Link>
       <SubType>UserControl</SubType>
@@ -206,6 +237,9 @@
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Core\IMessage\AlienMessage.cs">
       <Link>Core\IMessage\AlienMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Core\IMessage\AllenBradleyMessage.cs">
+      <Link>Core\IMessage\AllenBradleyMessage.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Core\IMessage\EFORTMessage.cs">
       <Link>Core\IMessage\EFORTMessage.cs</Link>
@@ -300,6 +334,9 @@
     <Compile Include="..\HslCommunication_Net45\Core\Transfer\ByteTransformHelper.cs">
       <Link>Core\Transfer\ByteTransformHelper.cs</Link>
     </Compile>
+    <Compile Include="..\HslCommunication_Net45\Core\Transfer\DataFormat.cs">
+      <Link>Core\Transfer\DataFormat.cs</Link>
+    </Compile>
     <Compile Include="..\HslCommunication_Net45\Core\Transfer\IByteTransform.cs">
       <Link>Core\Transfer\IByteTransform.cs</Link>
     </Compile>
@@ -369,6 +406,15 @@
     <Compile Include="..\HslCommunication_Net45\Enthernet\PushNet\PushGroupClient.cs">
       <Link>Enthernet\PushNet\PushGroupClient.cs</Link>
     </Compile>
+    <Compile Include="..\HslCommunication_Net45\Enthernet\Redis\RedisClient.cs">
+      <Link>Enthernet\Redis\RedisClient.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Enthernet\Redis\RedisHelper.cs">
+      <Link>Enthernet\Redis\RedisHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Enthernet\Redis\RedisSubscribe.cs">
+      <Link>Enthernet\Redis\RedisSubscribe.cs</Link>
+    </Compile>
     <Compile Include="..\HslCommunication_Net45\Enthernet\SimplifyNet\NetSimplifyClient.cs">
       <Link>Enthernet\SimplifyNet\NetSimplifyClient.cs</Link>
     </Compile>
@@ -383,6 +429,15 @@
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Enthernet\UdpNet\NetUdpServer.cs">
       <Link>Enthernet\UdpNet\NetUdpServer.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Instrument\Temperature\DAM3601.cs">
+      <Link>Instrument\Temperature\DAM3601.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Language\DefaultLanguage.cs">
+      <Link>Language\DefaultLanguage.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Language\English.cs">
+      <Link>Language\English.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\LogNet\Core\ILogNet.cs">
       <Link>LogNet\Core\ILogNet.cs</Link>
@@ -424,6 +479,9 @@
     <Compile Include="..\HslCommunication_Net45\ModBus\ModbusAddress.cs">
       <Link>ModBus\ModbusAddress.cs</Link>
     </Compile>
+    <Compile Include="..\HslCommunication_Net45\ModBus\ModbusAscii\ModbusAscii.cs">
+      <Link>ModBus\ModbusAscii\ModbusAscii.cs</Link>
+    </Compile>
     <Compile Include="..\HslCommunication_Net45\ModBus\ModbusInfo.cs">
       <Link>ModBus\ModbusInfo.cs</Link>
     </Compile>
@@ -448,11 +506,26 @@
     <Compile Include="..\HslCommunication_Net45\NamespaceDoc.cs">
       <Link>NamespaceDoc.cs</Link>
     </Compile>
+    <Compile Include="..\HslCommunication_Net45\Profinet\AllenBradley\AllenBradleyHelper.cs">
+      <Link>Profinet\AllenBradley\AllenBradleyHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Profinet\AllenBradley\AllenBradleyNet.cs">
+      <Link>Profinet\AllenBradley\AllenBradleyNet.cs</Link>
+    </Compile>
     <Compile Include="..\HslCommunication_Net45\Profinet\Melsec\MelsecA1EDataType.cs">
       <Link>Profinet\Melsec\MelsecA1EDataType.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Profinet\Melsec\MelsecA1ENet.cs">
       <Link>Profinet\Melsec\MelsecA1ENet.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Profinet\Melsec\MelsecFxLinks.cs">
+      <Link>Profinet\Melsec\MelsecFxLinks.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Profinet\Melsec\MelsecFxSerial.cs">
+      <Link>Profinet\Melsec\MelsecFxSerial.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Profinet\Melsec\MelsecHelper.cs">
+      <Link>Profinet\Melsec\MelsecHelper.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Profinet\Melsec\MelsecMcAsciiNet.cs">
       <Link>Profinet\Melsec\MelsecMcAsciiNet.cs</Link>
@@ -472,14 +545,17 @@
     <Compile Include="..\HslCommunication_Net45\Profinet\Omron\OmronFinsNet.cs">
       <Link>Profinet\Omron\OmronFinsNet.cs</Link>
     </Compile>
-    <Compile Include="..\HslCommunication_Net45\Profinet\Omron\OmronInfo.cs">
-      <Link>Profinet\Omron\OmronInfo.cs</Link>
+    <Compile Include="..\HslCommunication_Net45\Profinet\Panasonic\PanasonicMewtocol.cs">
+      <Link>Profinet\Panasonic\PanasonicMewtocol.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Profinet\Siemens\SiemensFetchWriteNet.cs">
       <Link>Profinet\Siemens\SiemensFetchWriteNet.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Profinet\Siemens\SiemensPLCS.cs">
       <Link>Profinet\Siemens\SiemensPLCS.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Profinet\Siemens\SiemensPPI.cs">
+      <Link>Profinet\Siemens\SiemensPPI.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\Profinet\Siemens\SiemensS7Net.cs">
       <Link>Profinet\Siemens\SiemensS7Net.cs</Link>
@@ -493,8 +569,14 @@
     <Compile Include="..\HslCommunication_Net45\Serial\CRCSupport.cs">
       <Link>Serial\CRCSupport.cs</Link>
     </Compile>
-    <Compile Include="..\HslCommunication_Net45\Serial\SerialCommunicationBase.cs">
-      <Link>Serial\SerialCommunicationBase.cs</Link>
+    <Compile Include="..\HslCommunication_Net45\Serial\SerialBase.cs">
+      <Link>Serial\SerialBase.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Serial\SerialDeviceBase.cs">
+      <Link>Serial\SerialDeviceBase.cs</Link>
+    </Compile>
+    <Compile Include="..\HslCommunication_Net45\Serial\SoftLRC.cs">
+      <Link>Serial\SoftLRC.cs</Link>
     </Compile>
     <Compile Include="..\HslCommunication_Net45\StringResources.cs">
       <Link>StringResources.cs</Link>
@@ -527,6 +609,10 @@
       <Link>BasicFramework\FormSupport.resx</Link>
       <DependentUpon>FormSupport.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\HslCommunication_Net45\Controls\UserBottle.resx">
+      <Link>Controls\UserBottle.resx</Link>
+      <DependentUpon>UserBottle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\HslCommunication_Net45\Controls\UserButton.resx">
       <Link>Controls\UserButton.resx</Link>
       <DependentUpon>UserButton.cs</DependentUpon>
@@ -539,6 +625,10 @@
       <Link>Controls\UserCurve.resx</Link>
       <DependentUpon>UserCurve.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\HslCommunication_Net45\Controls\UserDrum.resx">
+      <Link>Controls\UserDrum.resx</Link>
+      <DependentUpon>UserDrum.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\HslCommunication_Net45\Controls\UserGaugeChart.resx">
       <Link>Controls\UserGaugeChart.resx</Link>
       <DependentUpon>UserGaugeChart.cs</DependentUpon>
@@ -550,6 +640,10 @@
     <EmbeddedResource Include="..\HslCommunication_Net45\Controls\UserPieChart.resx">
       <Link>Controls\UserPieChart.resx</Link>
       <DependentUpon>UserPieChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\HslCommunication_Net45\Controls\UserPipe.resx">
+      <Link>Controls\UserPipe.resx</Link>
+      <DependentUpon>UserPipe.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\HslCommunication_Net45\Controls\UserSwitch.resx">
       <Link>Controls\UserSwitch.resx</Link>
@@ -693,8 +787,6 @@
       <Link>Doc.txt</Link>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Profinet\AllenBradley\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

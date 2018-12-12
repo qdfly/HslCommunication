@@ -100,7 +100,6 @@ namespace HslCommunication.Controls
         private int upDowm = 25;
 
 
-
         #endregion
 
         #region Data Member
@@ -462,6 +461,7 @@ namespace HslCommunication.Controls
             {
                 data_list.Remove( key );
             }
+            if (data_list.Count == 0) data_text = new string[0];
             // 重绘图形
             Invalidate( );
         }
@@ -474,6 +474,7 @@ namespace HslCommunication.Controls
         {
             int count = data_list.Count;
             data_list.Clear( );
+            if (data_list.Count == 0) data_text = new string[0];
             // 重绘图形
             if (count > 0) Invalidate( );
         }
@@ -582,6 +583,39 @@ namespace HslCommunication.Controls
             Invalidate( );
         }
         
+
+        /// <summary>
+        /// 设置一条曲线是否是可见的，如果该曲线不存在，则无效。
+        /// </summary>
+        /// <param name="key">关键字</param>
+        /// <param name="visible">是否可见</param>
+        public void SetCurveVisible( string key, bool visible )
+        {
+            if (data_list.ContainsKey( key ))
+            {
+                HslCurveItem curve = data_list[key];
+                curve.Visible = visible;
+                Invalidate( );
+            }
+        }
+
+        /// <summary>
+        /// 设置多条曲线是否是可见的，如果该曲线不存在，则无效。
+        /// </summary>
+        /// <param name="keys">关键字</param>
+        /// <param name="visible">是否可见</param>
+        public void SetCurveVisible( string[] keys, bool visible )
+        {
+            foreach (var key in keys)
+            {
+                if (data_list.ContainsKey( key ))
+                {
+                    HslCurveItem curve = data_list[key];
+                    curve.Visible = visible;
+                }
+            }
+            Invalidate( );
+        }
 
 
         #endregion
@@ -919,6 +953,8 @@ namespace HslCommunication.Controls
                 // 横坐标充满图形
                 foreach (var line in data_list.Values)
                 {
+                    if (!line.Visible) continue;
+                    
                     if (line.Data?.Length > 1)
                     {
                         float offect = (width_totle - leftRight * 2) * 1.0f / (value_StrechDataCountMax - 1);
@@ -946,6 +982,8 @@ namespace HslCommunication.Controls
                 // 横坐标对应图形
                 foreach (var line in data_list.Values)
                 {
+                    if (!line.Visible) continue;
+
                     if (line.Data?.Length > 1)
                     {
                         int countTmp = width_totle - 2 * leftRight + 1;
@@ -1036,6 +1074,7 @@ namespace HslCommunication.Controls
         {
             LineThickness = 1.0f;
             IsLeftFrame = true;
+            Visible = true;
         }
 
 
@@ -1059,7 +1098,10 @@ namespace HslCommunication.Controls
         /// </summary>
         public bool IsLeftFrame { get; set; }
 
-
+        /// <summary>
+        /// 本曲线是否显示出来，默认为显示
+        /// </summary>
+        public bool Visible { get; set; }
     }
 
     /// <summary>

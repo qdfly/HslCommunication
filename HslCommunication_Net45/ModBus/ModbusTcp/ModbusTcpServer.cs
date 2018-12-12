@@ -74,12 +74,15 @@ namespace HslCommunication.ModBus
         public int OnlineCount => onlineCount;
 
         /// <summary>
-        /// 多字节的数据是否高低位反转，常用于Int32,UInt32,float,double,Int64,UInt64类型读写
+        /// 获取或设置数据解析的格式，默认ABCD，可选BADC，CDAB，DCBA格式
         /// </summary>
-        public bool IsMultiWordReverse
+        /// <remarks>
+        /// 对于Int32,UInt32,float,double,Int64,UInt64类型来说，存在多地址的电脑情况，需要和服务器进行匹配
+        /// </remarks>
+        public DataFormat DataFormat
         {
-            get { return byteTransform.IsMultiWordReverse; }
-            set { byteTransform.IsMultiWordReverse = value; }
+            get { return byteTransform.DataFormat; }
+            set { byteTransform.DataFormat = value; }
         }
 
         /// <summary>
@@ -189,7 +192,7 @@ namespace HslCommunication.ModBus
         public void LoadDataPool( string path )
         {
             byte[] buffer = System.IO.File.ReadAllBytes( path );
-            if (buffer.Length < DataPoolLength * 6) throw new Exception( "文件数据不对" );
+            if (buffer.Length < DataPoolLength * 6) throw new Exception( "File is not correct" );
 
             // 线圈数据加载
             hybirdLockCoil.Enter( );
@@ -952,7 +955,7 @@ namespace HslCommunication.ModBus
                 }
                 catch (Exception ex)
                 {
-                    LogNet?.WriteException( ToString( ), "Ip信息获取失败", ex );
+                    LogNet?.WriteException( ToString( ), StringResources.Language.GetClientIpaddressFailed, ex );
                 }
 
                 if (IsTrustedClientsOnly)
@@ -961,13 +964,13 @@ namespace HslCommunication.ModBus
                     if (!CheckIpAddressTrusted( state.IpAddress ))
                     {
                         // 客户端不被信任，退出
-                        LogNet?.WriteDebug( ToString( ), $"客户端 [ {state.IpEndPoint} ] 不被信任，禁止登录！" );
+                        LogNet?.WriteDebug( ToString( ), string.Format( StringResources.Language.ClientDisableLogin, state.IpEndPoint ) );
                         state.WorkSocket.Close( );
                         return;
                     }
                 }
 
-                LogNet?.WriteDebug( ToString( ), $"客户端 [ {state.IpEndPoint} ] 上线" );
+                LogNet?.WriteDebug( ToString( ), string.Format( StringResources.Language.ClientOnlineInfo, state.IpEndPoint ) );
 
                 try
                 {
@@ -1000,7 +1003,7 @@ namespace HslCommunication.ModBus
                         state.WorkSocket?.Close( );
                         if (state.IsModbusOffline( ))
                         {
-                            LogNet?.WriteDebug( ToString( ), $"客户端 [ {state.IpEndPoint} ] 下线" );
+                            LogNet?.WriteDebug( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ) );
                             System.Threading.Interlocked.Decrement( ref onlineCount );
                         }
                         return;
@@ -1016,7 +1019,7 @@ namespace HslCommunication.ModBus
                     state.WorkSocket?.Close( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteException( ToString( ), $"客户端 [ {state.IpEndPoint} ] 异常下线，消息子节接收失败！", ex );
+                        LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ), ex );
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
                     return;
@@ -1037,7 +1040,7 @@ namespace HslCommunication.ModBus
                     state.WorkSocket?.Close( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteException( ToString( ), $"客户端 [ {state.IpEndPoint} ] 异常下线，再次启动接收失败！", ex );
+                        LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ), ex );
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
                     return;
@@ -1065,7 +1068,7 @@ namespace HslCommunication.ModBus
                         state.WorkSocket?.Close( );
                         if (state.IsModbusOffline( ))
                         {
-                            LogNet?.WriteException( ToString( ), $"客户端 [ {state.IpEndPoint} ] 异常下线，启动内容接收失败！", ex );
+                            LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ), ex );
                             System.Threading.Interlocked.Decrement( ref onlineCount );
                         }
                         return;
@@ -1077,7 +1080,7 @@ namespace HslCommunication.ModBus
                     state.WorkSocket?.Close( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteWarn( ToString( ), $"客户端 [ {state.IpEndPoint} ] 下线，不是标准的Modbus协议！" );
+                        LogNet?.WriteWarn( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ) + StringResources.Language.ModbusMatchFailed );
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
                 }
@@ -1106,7 +1109,7 @@ namespace HslCommunication.ModBus
                     state.WorkSocket?.Close( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteException( ToString( ), $"客户端 [ {state.IpEndPoint} ] 下线，内容数据接收失败！", ex );
+                        LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ), ex );
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
                     return;
@@ -1130,7 +1133,7 @@ namespace HslCommunication.ModBus
                     state.WorkSocket?.Close( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteError( ToString( ), $"客户端 [ {state.IpEndPoint} ] 下线，消息长度检查失败！" );
+                        LogNet?.WriteError( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ) );
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
                     return;
@@ -1152,7 +1155,7 @@ namespace HslCommunication.ModBus
                     state.WorkSocket?.Close( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteException( ToString( ), $"客户端 [ {state.IpEndPoint} ] 异常下线，重新接收消息失败！", ex );
+                        LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ), ex );
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
                     return;
@@ -1171,7 +1174,7 @@ namespace HslCommunication.ModBus
                     state.hybirdLock.Leave( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteException( ToString( ), $"客户端 [ {state.IpEndPoint} ] 异常下线，开始回发消息失败！", ex );
+                        LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ), ex );
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
                     return;
@@ -1197,7 +1200,7 @@ namespace HslCommunication.ModBus
                     state.WorkSocket?.Close( );
                     if (state.IsModbusOffline( ))
                     {
-                        LogNet?.WriteException( ToString( ), $"客户端 [ {state.IpEndPoint} ] 异常下线，确认回发消息失败！", ex );
+                        LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, state.IpEndPoint ), ex );
                         state = null;
                         System.Threading.Interlocked.Decrement( ref onlineCount );
                     }
@@ -1212,9 +1215,9 @@ namespace HslCommunication.ModBus
         /// <summary>
         /// 创建特殊的功能标识，然后返回该信息
         /// </summary>
-        /// <param name="modbusCore"></param>
-        /// <param name="error"></param>
-        /// <returns></returns>
+        /// <param name="modbusCore">modbus核心报文</param>
+        /// <param name="error">错误码</param>
+        /// <returns>携带错误码的modbus报文</returns>
         private byte[] CreateExceptionBack( byte[] modbusCore, byte error )
         {
             byte[] buffer = new byte[3];
@@ -1227,9 +1230,9 @@ namespace HslCommunication.ModBus
         /// <summary>
         /// 创建返回消息
         /// </summary>
-        /// <param name="modbusCore"></param>
-        /// <param name="content"></param>
-        /// <returns></returns>
+        /// <param name="modbusCore">modbus核心报文</param>
+        /// <param name="content">返回的实际数据内容</param>
+        /// <returns>携带内容的modbus报文</returns>
         private byte[] CreateReadBack( byte[] modbusCore, byte[] content )
         {
             byte[] buffer = new byte[3 + content.Length];
@@ -1243,8 +1246,8 @@ namespace HslCommunication.ModBus
         /// <summary>
         /// 创建写入成功的反馈信号
         /// </summary>
-        /// <param name="modbus"></param>
-        /// <returns></returns>
+        /// <param name="modbus">modbus核心报文</param>
+        /// <returns>携带成功写入的信息</returns>
         private byte[] CreateWriteBack( byte[] modbus )
         {
             byte[] buffer = new byte[6];
@@ -1278,7 +1281,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpReadCoilException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpReadCoilException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1308,7 +1311,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpReadCoilException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpReadCoilException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1338,7 +1341,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpReadRegisterException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpReadRegisterException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1367,7 +1370,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpReadRegisterException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpReadRegisterException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1390,7 +1393,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpWriteCoilException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpWriteCoilException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1413,7 +1416,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpWriteRegisterException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpWriteRegisterException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1443,7 +1446,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpWriteCoilException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpWriteCoilException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1494,7 +1497,7 @@ namespace HslCommunication.ModBus
             }
             catch (Exception ex)
             {
-                LogNet?.WriteException( ToString( ), StringResources.ModbusTcpWriteRegisterException, ex );
+                LogNet?.WriteException( ToString( ), StringResources.Language.ModbusTcpWriteRegisterException, ex );
                 return CreateExceptionBack( modbus, ModbusInfo.FunctionCodeReadWriteException );
             }
         }
@@ -1953,12 +1956,12 @@ namespace HslCommunication.ModBus
         #region Object Override
 
         /// <summary>
-        /// 获取本对象的字符串表示形式
+        /// 返回表示当前对象的字符串
         /// </summary>
-        /// <returns></returns>
+        /// <returns>字符串</returns>
         public override string ToString( )
         {
-            return "ModbusTcpServer";
+            return $"ModbusTcpServer[{Port}]";
         }
 
         #endregion

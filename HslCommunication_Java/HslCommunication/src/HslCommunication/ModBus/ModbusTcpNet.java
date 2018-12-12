@@ -4,6 +4,7 @@ import HslCommunication.BasicFramework.SoftBasic;
 import HslCommunication.BasicFramework.SoftIncrementCount;
 import HslCommunication.Core.IMessage.ModbusTcpMessage;
 import HslCommunication.Core.Net.NetworkBase.NetworkDeviceBase;
+import HslCommunication.Core.Transfer.DataFormat;
 import HslCommunication.Core.Transfer.ReverseWordTransform;
 import HslCommunication.Core.Types.OperateResult;
 import HslCommunication.Core.Types.OperateResultExOne;
@@ -87,22 +88,23 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
     }
 
     /**
-     * 获取多字节数据是否反转，适用于int,float,double,long类型的数据
+     * 设置多字节数据的反转类型，适用于int,float,double,long类型的数据
      *
-     * @return bool值
+     * @param dataFormat 数据类型
      */
-    public boolean isMultiWordReverse() {
-        return getByteTransform().IsMultiWordReverse;
+    public void setDataFormat(DataFormat dataFormat) {
+        getByteTransform().setDataFormat(dataFormat);
     }
 
     /**
-     * 设置多字节数据是否反转，适用于int,float,double,long类型的数据
+     * 获取多字节数据的反转类型，适用于int,float,double,long类型的数据
      *
-     * @param multiWordReverse bool值
+     * @return
      */
-    public void setMultiWordReverse(boolean multiWordReverse) {
-        getByteTransform().IsMultiWordReverse = multiWordReverse;
+    public DataFormat getDataFormat() {
+        return getByteTransform().getDataFormat();
     }
+
 
     /**
      * 字符串数据是否发生反转
@@ -276,7 +278,7 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
             }
             default: {
                 command = new OperateResultExOne<byte[]>();
-                command.Message = StringResources.ModbusTcpFunctionCodeNotSupport;
+                command.Message = StringResources.Language.ModbusTcpFunctionCodeNotSupport();
                 break;
             }
         }
@@ -287,7 +289,7 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
             // 二次数据处理
             if (resultBytes.Content.length >= 9) {
                 byte[] buffer = new byte[resultBytes.Content.length - 9];
-                System.arraycopy(resultBytes, 9, buffer, 0, buffer.length);
+                System.arraycopy(resultBytes.Content, 9, buffer, 0, buffer.length);
                 resultBytes.Content = buffer;
             }
         }
@@ -391,7 +393,6 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
         return OperateResultExOne.CreateSuccessResult(data);
     }
 
-
     /**
      * 写一个寄存器数据
      *
@@ -409,7 +410,6 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
         return CheckModbusTcpResponse(command.Content);
     }
 
-
     /**
      * 写一个寄存器数据
      *
@@ -421,7 +421,6 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
         byte[] buffer = Utilities.getBytes(value);
         return WriteOneRegister(address, buffer[1], buffer[0]);
     }
-
 
     /**
      * 将数据写入到Modbus的寄存器上去，需要指定起始地址和数据内容
@@ -439,7 +438,6 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
 
         return CheckModbusTcpResponse(command.Content);
     }
-
 
     /**
      * 写一个线圈信息，指定是否通断
@@ -473,49 +471,6 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
         return CheckModbusTcpResponse(command.Content);
     }
 
-
-    /**
-     * 向寄存器中写入指定长度的字符串,超出截断，不够补0，编码格式为ASCII
-     *
-     * @param address 要写入的数据地址
-     * @param value   要写入的实际数据
-     * @param length  指定的字符串长度，必须大于0
-     * @return 返回写入结果
-     */
-    public OperateResult Write(String address, String value, int length) {
-        byte[] temp = getByteTransform().TransByte(value, "ASCII");
-        temp = SoftBasic.ArrayExpandToLength(temp, length);
-        return Write(address, temp);
-    }
-
-
-    /**
-     * 向寄存器中写入字符串，编码格式为Unicode
-     *
-     * @param address 要写入的数据地址
-     * @param value   要写入的实际数据
-     * @return 返回写入结果
-     */
-    public OperateResult WriteUnicodeString(String address, String value) {
-        byte[] temp = Utilities.string2Byte(value);
-        return Write(address, temp);
-    }
-
-    /**
-     * 向寄存器中写入指定长度的字符串,超出截断，不够补0，编码格式为Unicode
-     *
-     * @param address 要写入的数据地址
-     * @param value   要写入的实际数据
-     * @param length  指定的字符串长度，必须大于0
-     * @return 返回写入结果
-     */
-    public OperateResult WriteUnicodeString(String address, String value, int length) {
-        byte[] temp = Utilities.string2Byte(value);
-        temp = SoftBasic.ArrayExpandToLength(temp, length * 2);
-        return Write(address, temp);
-    }
-
-
     /**
      * 向寄存器中写入bool数组，返回值说明，比如你写入M100,那么data[0]对应M100.0
      *
@@ -527,15 +482,13 @@ public class ModbusTcpNet extends NetworkDeviceBase<ModbusTcpMessage, ReverseWor
         return Write(address, SoftBasic.BoolArrayToByte(values));
     }
 
-
-    /// <summary>
-    /// 返回表示当前对象的字符串
-    /// </summary>
-    /// <returns>字符串信息</returns>
-
+    /**
+     * 返回表示当前对象的字符串
+     * @return 字符串信息
+     */
     @Override
     public String toString() {
-        return "ModbusTcpNet";
+        return "ModbusTcpNet[" + getIpAddress() + ":"+getPort()+"]";
     }
 
 }

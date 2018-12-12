@@ -41,7 +41,9 @@ namespace HslCommunication.Enthernet
         public NetPushServer()
         {
             dictPushClients = new Dictionary<string, PushGroupClient>( );
+            dictSendHistory = new Dictionary<string, string>( );
             dicHybirdLock = new SimpleHybirdLock( );
+            dicSendCacheLock = new SimpleHybirdLock( );
             sendAction = new Action<AppSession, string>( SendString );
 
             hybirdLock = new SimpleHybirdLock( );
@@ -68,8 +70,8 @@ namespace HslCommunication.Enthernet
                 // 判断当前的关键字在服务器是否有消息发布
                 if(!IsPushGroupOnline(receive.Content2))
                 {
-                    SendStringAndCheckReceive( socket, 1, "当前订阅的关键字不存在" );
-                    LogNet?.WriteWarn( ToString( ), "当前订阅的关键字不存在" );
+                    SendStringAndCheckReceive( socket, 1, StringResources.Language.KeyIsNotExist );
+                    LogNet?.WriteWarn( ToString( ), StringResources.Language.KeyIsNotExist );
                     socket?.Close( );
                     return;
                 }
@@ -77,9 +79,12 @@ namespace HslCommunication.Enthernet
                 SendStringAndCheckReceive( socket, 0, "" );
 
                 // 允许发布订阅信息
-                AppSession session = new AppSession( );
-                session.KeyGroup = receive.Content2;
-                session.WorkSocket = socket;
+                AppSession session = new AppSession
+                {
+                    KeyGroup = receive.Content2,
+                    WorkSocket = socket
+                };
+
                 try
                 {
                     session.IpEndPoint = (System.Net.IPEndPoint)socket.RemoteEndPoint;
@@ -87,7 +92,7 @@ namespace HslCommunication.Enthernet
                 }
                 catch (Exception ex)
                 {
-                    LogNet?.WriteException( ToString( ), "Ip信息获取失败", ex );
+                    LogNet?.WriteException( ToString( ), StringResources.Language.GetClientIpaddressFailed, ex );
                 }
 
                 try
@@ -96,17 +101,25 @@ namespace HslCommunication.Enthernet
                 }
                 catch(Exception ex)
                 {
-                    LogNet?.WriteException( ToString( ), "开启信息接收失败", ex );
+                    LogNet?.WriteException( ToString( ), StringResources.Language.SocketReceiveException, ex );
                     return;
                 }
 
-                LogNet?.WriteDebug( ToString( ), $"客户端 [ {session.IpEndPoint} ] 上线" );
+                LogNet?.WriteDebug( ToString( ), string.Format( StringResources.Language.ClientOnlineInfo, session.IpEndPoint ) );
                 PushGroupClient push = GetPushGroupClient( receive.Content2 );
                 if (push != null)
                 {
                     System.Threading.Interlocked.Increment( ref onlineCount );
                     push.AddPushClient( session );
+
+                    dicSendCacheLock.Enter( );
+                    if(dictSendHistory.ContainsKey( receive.Content2 ))
+                    {
+                        SendString( session, dictSendHistory[receive.Content2] );
+                    }
+                    dicSendCacheLock.Leave( );
                 }
+
             }
         }
 
@@ -129,6 +142,18 @@ namespace HslCommunication.Enthernet
         /// <param name="content">数据内容</param>
         public void PushString( string key, string content )
         {
+            dicSendCacheLock.Enter( );
+            if (dictSendHistory.ContainsKey( key ))
+            {
+                dictSendHistory[key] = content;
+            }
+            else
+            {
+                dictSendHistory.Add( key, content );
+            }
+            dicSendCacheLock.Leave( );
+
+
             AddPushKey( key );
             GetPushGroupClient( key )?.PushString( content, sendAction );
         }
@@ -175,7 +200,7 @@ namespace HslCommunication.Enthernet
             }
             else
             {
-                result = new OperateResult( ) { Message = "当前的关键字已经存在。" };
+                result = new OperateResult( StringResources.Language.KeyIsExistAlready );
             }
 
             hybirdLock.Leave( );
@@ -211,12 +236,12 @@ namespace HslCommunication.Enthernet
                     int bytesRead = client.EndReceive( ar );
 
                     // 正常下线退出
-                    LogNet?.WriteDebug( ToString( ), $"客户端 [ {session.IpEndPoint} ] 下线" );
+                    LogNet?.WriteDebug( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, session.IpEndPoint ) );
                     RemoveGroupOnlien( session.KeyGroup, session.ClientUniqueID );
                 }
                 catch (Exception ex)
                 {
-                    LogNet?.WriteException( ToString( ), $"客户端 [ {session.IpEndPoint} ] 下线", ex );
+                    LogNet?.WriteException( ToString( ), string.Format( StringResources.Language.ClientOfflineInfo, session.IpEndPoint ), ex );
                     RemoveGroupOnlien( session.KeyGroup, session.ClientUniqueID );
                 }
             }
@@ -269,8 +294,8 @@ namespace HslCommunication.Enthernet
         /// <summary>
         /// 移除客户端的数据信息
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="clientID"></param>
+        /// <param name="key">指定的客户端</param>
+        /// <param name="clientID">指定的客户端唯一的id信息</param>
         private void RemoveGroupOnlien( string key, string clientID )
         {
             PushGroupClient push = GetPushGroupClient( key );
@@ -308,8 +333,10 @@ namespace HslCommunication.Enthernet
 
         #region Private Member
 
+        private Dictionary<string, string> dictSendHistory;                  // 词典缓存的数据发送对象
         private Dictionary<string, PushGroupClient> dictPushClients;         // 系统的数据词典
         private SimpleHybirdLock dicHybirdLock;                              // 词典锁
+        private SimpleHybirdLock dicSendCacheLock;                           // 缓存数据的锁
         private Action<AppSession, string> sendAction;                       // 发送数据的委托
         private int onlineCount = 0;                                         // 在线客户端的数量，用于监视显示
         private List<NetPushClient> pushClients;                             // 客户端列表

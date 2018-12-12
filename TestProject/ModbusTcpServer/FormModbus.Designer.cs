@@ -29,8 +29,8 @@
         private void InitializeComponent( )
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button11 = new System.Windows.Forms.Button();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.button5 = new System.Windows.Forms.Button();
             this.textBox10 = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -53,6 +53,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
@@ -95,7 +96,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-            this.button10 = new System.Windows.Forms.Button();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -108,8 +109,9 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.comboBox2);
+            this.panel1.Controls.Add(this.button11);
             this.panel1.Controls.Add(this.checkBox3);
-            this.panel1.Controls.Add(this.checkBox2);
             this.panel1.Controls.Add(this.button5);
             this.panel1.Controls.Add(this.textBox10);
             this.panel1.Controls.Add(this.label14);
@@ -124,6 +126,17 @@
             this.panel1.Size = new System.Drawing.Size(978, 54);
             this.panel1.TabIndex = 0;
             // 
+            // button11
+            // 
+            this.button11.Enabled = false;
+            this.button11.Location = new System.Drawing.Point(235, 11);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(83, 28);
+            this.button11.TabIndex = 28;
+            this.button11.Text = "关闭服务";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
@@ -134,19 +147,9 @@
             this.checkBox3.Text = "字符串颠倒";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(609, 16);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(111, 21);
-            this.checkBox2.TabIndex = 26;
-            this.checkBox2.Text = "数据高地位颠倒";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(496, 11);
+            this.button5.Location = new System.Drawing.Point(510, 11);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(91, 28);
             this.button5.TabIndex = 9;
@@ -156,7 +159,7 @@
             // 
             // textBox10
             // 
-            this.textBox10.Location = new System.Drawing.Point(426, 14);
+            this.textBox10.Location = new System.Drawing.Point(445, 14);
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(61, 23);
             this.textBox10.TabIndex = 8;
@@ -165,7 +168,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(391, 17);
+            this.label14.Location = new System.Drawing.Point(410, 17);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(44, 17);
             this.label14.TabIndex = 7;
@@ -184,9 +187,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(294, 11);
+            this.button3.Location = new System.Drawing.Point(326, 11);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(91, 28);
+            this.button3.Size = new System.Drawing.Size(80, 28);
             this.button3.TabIndex = 5;
             this.button3.Text = "客户端过滤";
             this.button3.UseVisualStyleBackColor = true;
@@ -194,9 +197,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(197, 11);
+            this.button1.Location = new System.Drawing.Point(145, 11);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(91, 28);
+            this.button1.Size = new System.Drawing.Size(83, 28);
             this.button1.TabIndex = 4;
             this.button1.Text = "启动服务";
             this.button1.UseVisualStyleBackColor = true;
@@ -206,7 +209,7 @@
             // 
             this.textBox2.Location = new System.Drawing.Point(74, 14);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(117, 23);
+            this.textBox2.Size = new System.Drawing.Size(65, 23);
             this.textBox2.TabIndex = 3;
             this.textBox2.Text = "502";
             // 
@@ -388,6 +391,16 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "单数据写入测试";
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(72, 130);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(60, 28);
+            this.button10.TabIndex = 21;
+            this.button10.Text = "定时写";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button9
             // 
@@ -811,15 +824,19 @@
             this.linkLabel2.Text = "创作不易，感谢打赏";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
-            // button10
+            // comboBox2
             // 
-            this.button10.Location = new System.Drawing.Point(72, 130);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(60, 28);
-            this.button10.TabIndex = 21;
-            this.button10.Text = "定时写";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "ABCD",
+            "BADC",
+            "CDAB",
+            "DCAB"});
+            this.comboBox2.Location = new System.Drawing.Point(611, 12);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(111, 25);
+            this.comboBox2.TabIndex = 29;
             // 
             // FormModbus
             // 
@@ -922,9 +939,10 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.ComboBox comboBox2;
     }
 }

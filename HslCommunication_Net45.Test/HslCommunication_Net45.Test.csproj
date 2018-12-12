@@ -54,13 +54,18 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicFramework\SoftBasicTest.cs" />
+    <Compile Include="BasicFramework\SoftBufferTest.cs" />
     <Compile Include="BasicFramework\SoftSecurityTest.cs" />
     <Compile Include="BasicFramework\SoftZippedTest.cs" />
+    <Compile Include="Core\Transfer\ReverseWordTransformTest4.cs" />
+    <Compile Include="Core\Transfer\ReverseWordTransformTest3.cs" />
     <Compile Include="Documentation\Samples\Algorithms\ConnectPool.cs" />
     <Compile Include="Documentation\Samples\BasicFramework\SoftAnimation.cs" />
+    <Compile Include="Documentation\Samples\BasicFramework\SoftFileSaveBaseExample.cs" />
     <Compile Include="Documentation\Samples\Core\IReadWriteNet.cs" />
     <Compile Include="Core\Net\HslProtocolTest.cs" />
     <Compile Include="Core\Net\NetHandleTest.cs" />
@@ -80,14 +85,20 @@
     <Compile Include="Documentation\Samples\Enthernet\NetComplexClient.cs" />
     <Compile Include="Documentation\Samples\Enthernet\NetSimplifyClient.cs" />
     <Compile Include="Documentation\Samples\Modbus\Modbus.cs" />
+    <Compile Include="Documentation\Samples\Modbus\ModbusAsciiExample.cs" />
     <Compile Include="Documentation\Samples\Modbus\ModbusTcpServer.cs" />
     <Compile Include="Documentation\Samples\Profinet\MelsecAscii.cs" />
+    <Compile Include="Documentation\Samples\Profinet\MelsecFxSerial.cs" />
     <Compile Include="Documentation\Samples\Profinet\melsecTest.cs" />
     <Compile Include="Documentation\Samples\Profinet\OmronFinsNet.cs" />
     <Compile Include="Documentation\Samples\Profinet\SiemensFetchWriteNet.cs" />
     <Compile Include="Documentation\Samples\Profinet\SiemensS7Net.cs" />
     <Compile Include="Documentation\Samples\Serial\SoftCRC16.cs" />
-    <Compile Include="Modbus\ModbusTest.cs" />
+    <Compile Include="Modbus\ModbusTcpTest.cs" />
+    <Compile Include="Profinet\AllenBradley\AllenBradleyHelper.cs" />
+    <Compile Include="Profinet\Melsec\MelsecFxLinksTest.cs" />
+    <Compile Include="Profinet\Melsec\MelsecFxSerialTest.cs" />
+    <Compile Include="Profinet\Panasonic\PanasonicMewtocolTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

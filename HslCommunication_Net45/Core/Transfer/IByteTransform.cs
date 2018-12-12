@@ -16,12 +16,7 @@ using System.Text;
  *    3. 以2字节为单位颠倒转换，比如Modbus协议
  * 
  *********************************************************************************************************/
-
-
-
-
-
-
+ 
 
 
 namespace HslCommunication.Core
@@ -31,6 +26,7 @@ namespace HslCommunication.Core
     /// </summary>
     public interface IByteTransform
     {
+
         #region Get Value From Bytes
 
         /// <summary>
@@ -222,8 +218,7 @@ namespace HslCommunication.Core
 
 
         #endregion
-
-
+        
         #region Get Bytes From Value
 
 
@@ -367,6 +362,17 @@ namespace HslCommunication.Core
         /// <param name="encoding">字符串的编码方式</param>
         /// <returns>buffer数据</returns>
         byte[] TransByte( string value, Encoding encoding );
+
+
+        #endregion
+
+        #region Public Properties
+
+
+        /// <summary>
+        /// 获取或设置数据解析的格式，默认ABCD，可选BADC，CDAB，DCBA格式
+        /// </summary>
+        DataFormat DataFormat { get; set; }
 
 
         #endregion

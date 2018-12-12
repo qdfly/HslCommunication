@@ -36,7 +36,7 @@ namespace HslCommunication.Enthernet
 
             if (string.IsNullOrEmpty( key ))
             {
-                throw new Exception( "key 不允许为空" );
+                throw new Exception( StringResources.Language.KeyIsNotAllowedNull );
             }
         }
 
@@ -49,6 +49,7 @@ namespace HslCommunication.Enthernet
             if(protocol == HslProtocol.ProtocolUserString)
             {
                 action?.Invoke( this, Encoding.Unicode.GetString( content ) );
+                OnReceived?.Invoke( this, Encoding.Unicode.GetString( content ) );
             }
         }
 
@@ -58,49 +59,19 @@ namespace HslCommunication.Enthernet
             while (true)
             {
                 Console.WriteLine( ex );
-                Console.WriteLine( "10 秒钟后尝试重连服务器" );
-                System.Threading.Thread.Sleep( 10000 );
+                Console.WriteLine( StringResources.Language.ReConnectServerAfterTenSeconds );
+                System.Threading.Thread.Sleep( this.reconnectTime );
 
                 if(CreatePush( ).IsSuccess)
                 {
-                    Console.WriteLine( "重连服务器成功" );
+                    Console.WriteLine( StringResources.Language.ReConnectServerSuccess );
                     break;
                 }
             }
         }
 
         #endregion
-
-        #region Private Method
-
-        private OperateResult CreatePush( )
-        {
-            CoreSocket?.Close( );
-
-            OperateResult<Socket> connect = CreateSocketAndConnect( endPoint, 5000 );
-            if (!connect.IsSuccess) return connect;
-
-            OperateResult send = SendStringAndCheckReceive( connect.Content, 0, keyWord );
-            if (!send.IsSuccess) return send;
-
-            OperateResult<int, string> receive = ReceiveStringContentFromSocket( connect.Content );
-            if (!receive.IsSuccess) return receive;
-
-            if (receive.Content1 != 0) return new OperateResult( )
-            {
-                Message = receive.Content2
-            };
-
-            AppSession appSession = new AppSession( );
-            CoreSocket = connect.Content;
-            appSession.WorkSocket = connect.Content;
-            ReBeginReceiveHead( appSession, false );
-            
-            return OperateResult.CreateSuccessResult( );
-        }
-
-        #endregion
-
+        
         #region Public Method 
 
         /// <summary>
@@ -112,6 +83,42 @@ namespace HslCommunication.Enthernet
         {
             action = pushCallBack;
             return CreatePush( );
+        }
+
+        /// <summary>
+        /// 创建数据推送服务，使用事件绑定的机制实现
+        /// </summary>
+        /// <returns>是否创建成功</returns>
+        public OperateResult CreatePush( )
+        {
+            CoreSocket?.Close( );
+
+            // 连接服务器
+            OperateResult<Socket> connect = CreateSocketAndConnect( endPoint, 5000 );
+            if (!connect.IsSuccess) return connect;
+
+            // 发送订阅的关键字
+            OperateResult send = SendStringAndCheckReceive( connect.Content, 0, keyWord );
+            if (!send.IsSuccess) return send;
+
+            // 确认服务器的反馈
+            OperateResult<int, string> receive = ReceiveStringContentFromSocket( connect.Content );
+            if (!receive.IsSuccess) return receive;
+
+            // 订阅不存在
+            if (receive.Content1 != 0)
+            {
+                connect.Content?.Close( );
+                return new OperateResult( receive.Content2 );
+            }
+
+            // 异步接收
+            AppSession appSession = new AppSession( );
+            CoreSocket = connect.Content;
+            appSession.WorkSocket = connect.Content;
+            ReBeginReceiveHead( appSession, false );
+
+            return OperateResult.CreateSuccessResult( );
         }
         
         /// <summary>
@@ -133,6 +140,20 @@ namespace HslCommunication.Enthernet
         /// </summary>
         public string KeyWord => keyWord;
 
+        /// <summary>
+        /// 获取或设置重连服务器的间隔时间
+        /// </summary>
+        public int ReConnectTime { set => reconnectTime = value; get => reconnectTime; }
+
+        #endregion
+
+        #region Public Event
+
+        /// <summary>
+        /// 当接收到数据的事件信息，接收到数据的时候触发。
+        /// </summary>
+        public event Action<NetPushClient, string> OnReceived;
+
         #endregion
 
         #region Private Member
@@ -140,6 +161,7 @@ namespace HslCommunication.Enthernet
         private IPEndPoint endPoint;                           // 服务器的地址及端口信息
         private string keyWord = string.Empty;                 // 缓存的订阅关键字
         private Action<NetPushClient, string> action;          // 服务器推送后的回调方法
+        private int reconnectTime = 10000;                     // 重连服务器的时间
 
         #endregion
 
@@ -151,7 +173,7 @@ namespace HslCommunication.Enthernet
         /// <returns>字符串</returns>
         public override string ToString( )
         {
-            return "NetPushClient";
+            return $"NetPushClient[{endPoint.ToString()}]";
         }
 
         #endregion

@@ -121,6 +121,7 @@ namespace HslCommunication.ModBus
 
 
 #if !NETSTANDARD2_0
+
         /// <summary>
         /// 将modbus指令打包成Modbus-Rtu指令
         /// </summary>
@@ -130,6 +131,58 @@ namespace HslCommunication.ModBus
         {
             return Serial.SoftCRC16.CRC16( value );
         }
+
+        /// <summary>
+        /// 将一个modbus-rtu的数据报文，转换成modbus-ascii的数据报文
+        /// </summary>
+        /// <param name="value">modbus-rtu的完整报文，携带相关的校验码</param>
+        /// <returns>可以用于直接发送的modbus-ascii的报文</returns>
+        public static byte[] TransRtuToAsciiPackCommand( byte[] value )
+        {
+            // remove crc check
+            byte[] modbus = BasicFramework.SoftBasic.BytesArrayRemoveLast( value, 2 );
+
+            // add LRC check
+            byte[] modbus_lrc = Serial.SoftLRC.LRC( modbus );
+
+            // Translate to ascii information
+            byte[] modbus_ascii = BasicFramework.SoftBasic.BytesToAsciiBytes( modbus_lrc );
+
+            // add head and end informarion
+            return BasicFramework.SoftBasic.SpliceTwoByteArray( BasicFramework.SoftBasic.SpliceTwoByteArray( new byte[] { 0x3A }, modbus_ascii ), new byte[] { 0x0D, 0x0A } );
+        }
+
+        /// <summary>
+        /// 将一个modbus-ascii的数据报文，转换成的modbus核心数据报文
+        /// </summary>
+        /// <param name="value">modbus-ascii的完整报文，携带相关的校验码</param>
+        /// <returns>可以用于直接发送的modbus的报文</returns>
+        public static OperateResult<byte[]> TransAsciiPackCommandToRtu( byte[] value )
+        {
+            try
+            {
+                // response check
+                if (value[0] != 0x3A || value[value.Length - 2] != 0x0D || value[value.Length - 1] != 0x0A)
+                    return new OperateResult<byte[]>( ) { Message = StringResources.Language.ModbusAsciiFormatCheckFailed + BasicFramework.SoftBasic.ByteToHexString( value ) };
+
+                // remove head and end
+                byte[] modbus_ascii = BasicFramework.SoftBasic.BytesArrayRemoveDouble( value, 1, 2 );
+
+                // get modbus core
+                byte[] modbus_core = BasicFramework.SoftBasic.AsciiBytesToBytes( modbus_ascii );
+
+                if (!Serial.SoftLRC.CheckLRC( modbus_core ))
+                    return new OperateResult<byte[]>( ) { Message = StringResources.Language.ModbusLRCCheckFailed + BasicFramework.SoftBasic.ByteToHexString( modbus_core ) };
+
+                // remove the last info
+                return OperateResult.CreateSuccessResult( BasicFramework.SoftBasic.BytesArrayRemoveLast( modbus_core, 1 ) );
+            }
+            catch(Exception ex)
+            {
+                return new OperateResult<byte[]>( ) { Message = ex.Message + BasicFramework.SoftBasic.ByteToHexString( value ) };
+            }
+        }
+
 #endif
 
         /// <summary>
@@ -145,7 +198,7 @@ namespace HslCommunication.ModBus
                 ModbusAddress mAddress = new ModbusAddress( address );
                 if (!isStartWithZero)
                 {
-                    if (mAddress.Address < 1) throw new Exception( "地址值在起始地址为1的情况下，必须大于1" );
+                    if (mAddress.Address < 1) throw new Exception( StringResources.Language.ModbusAddressMustMoreThanOne );
                     mAddress.Address = (ushort)(mAddress.Address - 1);
                 }
                 return OperateResult.CreateSuccessResult( mAddress );
@@ -165,11 +218,11 @@ namespace HslCommunication.ModBus
         {
             switch (code)
             {
-                case ModbusInfo.FunctionCodeNotSupport: return StringResources.ModbusTcpFunctionCodeNotSupport;
-                case ModbusInfo.FunctionCodeOverBound: return StringResources.ModbusTcpFunctionCodeOverBound;
-                case ModbusInfo.FunctionCodeQuantityOver: return StringResources.ModbusTcpFunctionCodeQuantityOver;
-                case ModbusInfo.FunctionCodeReadWriteException: return StringResources.ModbusTcpFunctionCodeReadWriteException;
-                default: return StringResources.UnknownError;
+                case ModbusInfo.FunctionCodeNotSupport:               return StringResources.Language.ModbusTcpFunctionCodeNotSupport;
+                case ModbusInfo.FunctionCodeOverBound:                return StringResources.Language.ModbusTcpFunctionCodeOverBound;
+                case ModbusInfo.FunctionCodeQuantityOver:             return StringResources.Language.ModbusTcpFunctionCodeQuantityOver;
+                case ModbusInfo.FunctionCodeReadWriteException:       return StringResources.Language.ModbusTcpFunctionCodeReadWriteException;
+                default:                                              return StringResources.Language.UnknownError;
             }
         }
 

@@ -11,6 +11,27 @@ namespace HslCommunication.Core
     /// </summary>
     public class ByteTransformBase : IByteTransform
     {
+        #region Constructor
+
+        /// <summary>
+        /// 实例化一个默认的对象
+        /// </summary>
+        public ByteTransformBase( )
+        {
+            DataFormat = DataFormat.DCBA;
+        }
+
+        /// <summary>
+        /// 使用指定的数据解析来实例化对象
+        /// </summary>
+        /// <param name="dataFormat">数据规则</param>
+        public ByteTransformBase( DataFormat dataFormat )
+        {
+            this.DataFormat = dataFormat;
+        }
+
+        #endregion
+
         #region Get Value From Bytes
 
         /// <summary>
@@ -21,7 +42,7 @@ namespace HslCommunication.Core
         /// <returns>bool对象</returns>
         public virtual bool TransBool( byte[] buffer, int index )
         {
-            return buffer[index] != 0x00;
+            return ((buffer[index] & 0x01) == 0x01);
         }
 
 
@@ -56,7 +77,7 @@ namespace HslCommunication.Core
         /// <param name="buffer">缓存数据</param>
         /// <param name="index">索引位置</param>
         /// <param name="length">读取的数组长度</param>
-        /// <returns></returns>
+        /// <returns>byte数组对象</returns>
         public virtual byte[] TransByte( byte[] buffer, int index, int length )
         {
             byte[] tmp = new byte[length];
@@ -132,7 +153,7 @@ namespace HslCommunication.Core
         /// <returns>int对象</returns>
         public virtual int TransInt32( byte[] buffer, int index )
         {
-            return BitConverter.ToInt32( buffer, index );
+            return BitConverter.ToInt32( ByteTransDataFormat4( buffer, index ), 0 );
         }
 
         /// <summary>
@@ -162,7 +183,7 @@ namespace HslCommunication.Core
         /// <returns>uint对象</returns>
         public virtual uint TransUInt32( byte[] buffer, int index )
         {
-            return BitConverter.ToUInt32( buffer, index );
+            return BitConverter.ToUInt32( ByteTransDataFormat4( buffer, index ), 0 );
         }
 
         /// <summary>
@@ -190,7 +211,7 @@ namespace HslCommunication.Core
         /// <returns>long对象</returns>
         public virtual long TransInt64( byte[] buffer, int index )
         {
-            return BitConverter.ToInt64( buffer, index );
+            return BitConverter.ToInt64( ByteTransDataFormat8( buffer, index ), 0 );
         }
 
         /// <summary>
@@ -219,7 +240,7 @@ namespace HslCommunication.Core
         /// <returns>ulong对象</returns>
         public virtual ulong TransUInt64( byte[] buffer, int index )
         {
-            return BitConverter.ToUInt64( buffer, index );
+            return BitConverter.ToUInt64( ByteTransDataFormat8( buffer, index ), 0 );
         }
 
         /// <summary>
@@ -247,7 +268,7 @@ namespace HslCommunication.Core
         /// <returns>float对象</returns>
         public virtual float TransSingle( byte[] buffer, int index )
         {
-            return BitConverter.ToSingle( buffer, index );
+            return BitConverter.ToSingle( ByteTransDataFormat4( buffer, index ), 0 );
         }
 
         /// <summary>
@@ -256,7 +277,7 @@ namespace HslCommunication.Core
         /// <param name="buffer">缓存数据</param>
         /// <param name="index">索引位置</param>
         /// <param name="length">读取的数组长度</param>
-        /// <returns></returns>
+        /// <returns>float数组对象</returns>
         public virtual float[] TransSingle( byte[] buffer, int index, int length )
         {
             float[] tmp = new float[length];
@@ -276,7 +297,7 @@ namespace HslCommunication.Core
         /// <returns>double对象</returns>
         public virtual double TransDouble( byte[] buffer, int index )
         {
-            return BitConverter.ToDouble( buffer, index );
+            return BitConverter.ToDouble( ByteTransDataFormat8( buffer, index ), 0 );
         }
 
         /// <summary>
@@ -285,7 +306,7 @@ namespace HslCommunication.Core
         /// <param name="buffer">缓存对象</param>
         /// <param name="index">索引位置</param>
         /// <param name="length">读取的数组长度</param>
-        /// <returns></returns>
+        /// <returns>double数组对象</returns>
         public virtual double[] TransDouble( byte[] buffer, int index, int length )
         {
             double[] tmp = new double[length];
@@ -314,7 +335,6 @@ namespace HslCommunication.Core
 
         #endregion
 
-
         #region Get Bytes From Value
 
 
@@ -337,7 +357,7 @@ namespace HslCommunication.Core
         {
             if (values == null) return null;
 
-            return BasicFramework.SoftBasic.BoolArrayToByte( values );
+            return SoftBasic.BoolArrayToByte( values );
         }
 
 
@@ -433,7 +453,7 @@ namespace HslCommunication.Core
             byte[] buffer = new byte[values.Length * 4];
             for (int i = 0; i < values.Length; i++)
             {
-                BitConverter.GetBytes( values[i] ).CopyTo( buffer, 4 * i );
+                ByteTransDataFormat4( BitConverter.GetBytes( values[i] ) ).CopyTo( buffer, 4 * i );
             }
 
             return buffer;
@@ -462,7 +482,7 @@ namespace HslCommunication.Core
             byte[] buffer = new byte[values.Length * 4];
             for (int i = 0; i < values.Length; i++)
             {
-                BitConverter.GetBytes( values[i] ).CopyTo( buffer, 4 * i );
+                ByteTransDataFormat4( BitConverter.GetBytes( values[i] ) ).CopyTo( buffer, 4 * i );
             }
 
             return buffer;
@@ -491,7 +511,7 @@ namespace HslCommunication.Core
             byte[] buffer = new byte[values.Length * 8];
             for (int i = 0; i < values.Length; i++)
             {
-                BitConverter.GetBytes( values[i] ).CopyTo( buffer, 8 * i );
+                ByteTransDataFormat8( BitConverter.GetBytes( values[i] ) ).CopyTo( buffer, 8 * i );
             }
 
             return buffer;
@@ -519,7 +539,7 @@ namespace HslCommunication.Core
             byte[] buffer = new byte[values.Length * 8];
             for (int i = 0; i < values.Length; i++)
             {
-                BitConverter.GetBytes( values[i] ).CopyTo( buffer, 8 * i );
+                ByteTransDataFormat8( BitConverter.GetBytes( values[i] ) ).CopyTo( buffer, 8 * i );
             }
 
             return buffer;
@@ -547,7 +567,7 @@ namespace HslCommunication.Core
             byte[] buffer = new byte[values.Length * 4];
             for (int i = 0; i < values.Length; i++)
             {
-                BitConverter.GetBytes( values[i] ).CopyTo( buffer, 4 * i );
+                ByteTransDataFormat4( BitConverter.GetBytes( values[i] ) ).CopyTo( buffer, 4 * i );
             }
 
             return buffer;
@@ -575,7 +595,7 @@ namespace HslCommunication.Core
             byte[] buffer = new byte[values.Length * 8];
             for (int i = 0; i < values.Length; i++)
             {
-                BitConverter.GetBytes( values[i] ).CopyTo( buffer, 8 * i );
+                ByteTransDataFormat8( BitConverter.GetBytes( values[i] ) ).CopyTo( buffer, 8 * i );
             }
 
             return buffer;
@@ -597,6 +617,130 @@ namespace HslCommunication.Core
 
         #endregion
 
+        #region DataFormat Support
+
+        /// <summary>
+        /// 反转多字节的数据信息
+        /// </summary>
+        /// <param name="value">数据字节</param>
+        /// <param name="index">起始索引，默认值为0</param>
+        /// <returns>实际字节信息</returns>
+        protected byte[] ByteTransDataFormat4( byte[] value, int index = 0 )
+        {
+            byte[] buffer = new byte[4];
+            switch (DataFormat)
+            {
+                case DataFormat.ABCD:
+                    {
+                        buffer[0] = value[index + 3];
+                        buffer[1] = value[index + 2];
+                        buffer[2] = value[index + 1];
+                        buffer[3] = value[index + 0];
+                        break;
+                    }
+                case DataFormat.BADC:
+                    {
+                        buffer[0] = value[index + 2];
+                        buffer[1] = value[index + 3];
+                        buffer[2] = value[index + 0];
+                        buffer[3] = value[index + 1];
+                        break;
+                    }
+
+                case DataFormat.CDAB:
+                    {
+                        buffer[0] = value[index + 1];
+                        buffer[1] = value[index + 0];
+                        buffer[2] = value[index + 3];
+                        buffer[3] = value[index + 2];
+                        break;
+                    }
+                case DataFormat.DCBA:
+                    {
+                        buffer[0] = value[index + 0];
+                        buffer[1] = value[index + 1];
+                        buffer[2] = value[index + 2];
+                        buffer[3] = value[index + 3];
+                        break;
+                    }
+            }
+            return buffer;
+        }
+
+
+        /// <summary>
+        /// 反转多字节的数据信息
+        /// </summary>
+        /// <param name="value">数据字节</param>
+        /// <param name="index">起始索引，默认值为0</param>
+        /// <returns>实际字节信息</returns>
+        protected byte[] ByteTransDataFormat8( byte[] value, int index = 0 )
+        {
+            byte[] buffer = new byte[8];
+            switch (DataFormat)
+            {
+                case DataFormat.ABCD:
+                    {
+                        buffer[0] = value[index + 7];
+                        buffer[1] = value[index + 6];
+                        buffer[2] = value[index + 5];
+                        buffer[3] = value[index + 4];
+                        buffer[4] = value[index + 3];
+                        buffer[5] = value[index + 2];
+                        buffer[6] = value[index + 1];
+                        buffer[7] = value[index + 0];
+                        break;
+                    }
+                case DataFormat.BADC:
+                    {
+                        buffer[0] = value[index + 6];
+                        buffer[1] = value[index + 7];
+                        buffer[2] = value[index + 4];
+                        buffer[3] = value[index + 5];
+                        buffer[4] = value[index + 2];
+                        buffer[5] = value[index + 3];
+                        buffer[6] = value[index + 0];
+                        buffer[7] = value[index + 1];
+                        break;
+                    }
+
+                case DataFormat.CDAB:
+                    {
+                        buffer[0] = value[index + 1];
+                        buffer[1] = value[index + 0];
+                        buffer[2] = value[index + 3];
+                        buffer[3] = value[index + 2];
+                        buffer[4] = value[index + 5];
+                        buffer[5] = value[index + 4];
+                        buffer[6] = value[index + 7];
+                        buffer[7] = value[index + 6];
+                        break;
+                    }
+                case DataFormat.DCBA:
+                    {
+                        buffer[0] = value[index + 0];
+                        buffer[1] = value[index + 1];
+                        buffer[2] = value[index + 2];
+                        buffer[3] = value[index + 3];
+                        buffer[4] = value[index + 4];
+                        buffer[5] = value[index + 5];
+                        buffer[6] = value[index + 6];
+                        buffer[7] = value[index + 7];
+                        break;
+                    }
+            }
+            return buffer;
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// 获取或设置数据解析的格式，默认DCBA，也即是无修改，可选ABCD,BADC，CDAB，DCBA格式，对于Modbus协议来说，默认ABCD
+        /// </summary>
+        public DataFormat DataFormat { get; set; }
+
+        #endregion
     }
-    
 }

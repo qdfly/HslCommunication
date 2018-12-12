@@ -12,7 +12,7 @@ namespace HslCommunication_Net45.Test.Core.Transfer
     {
         public ReverseWordTransformTest2( )
         {
-            byteTransform.IsMultiWordReverse = true;
+            byteTransform.DataFormat = HslCommunication.Core.DataFormat.BADC;
         }
 
 

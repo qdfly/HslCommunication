@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -180,11 +182,24 @@ public class Utilities {
     /**
      * 将字节数组转换成string数据
      * @param bytes 字节数组
-     * @param charsetName 起始位置
+     * @param charsetName 字符编码
      * @return string值
      */
     public static String getString(byte[] bytes, String charsetName) {
         return new String(bytes, Charset.forName(charsetName));
+    }
+
+
+    /**
+     * 将字节数组转换成string数据
+     * @param bytes 字节数组
+     * @param index 起始位置
+     * @param length 数据长度
+     * @param charsetName 字符编码
+     * @return string值
+     */
+    public static String getString(byte[] bytes,int index, int length, String charsetName) {
+        return new String(bytes,index,length,Charset.forName(charsetName));
     }
 
 
@@ -250,8 +265,8 @@ public class Utilities {
 
     /**
      * 将字符串数据转换成字节数组，主要转换由C#的字符串的数据
-     * @param str
-     * @return
+     * @param str 字符串信息
+     * @return 转化后的字节数组
      */
     public static byte[] string2Byte(String str) {
         if (str == null) {
@@ -264,26 +279,22 @@ public class Utilities {
             byteArray = str.getBytes();
         }
 
-
-        if(byteArray.length >=2){
-            if(byteArray[0] == -1 && byteArray[1] == -2){
+        if (byteArray.length >= 2) {
+            if (byteArray[0] == -1 && byteArray[1] == -2) {
                 byte[] newArray = new byte[byteArray.length - 2];
-                System.arraycopy(byteArray,2,newArray,0,newArray.length);
+                System.arraycopy(byteArray, 2, newArray, 0, newArray.length);
                 byteArray = newArray;
-            }
-            else if(byteArray[0] == -2 && byteArray[1] == -1)
-            {
-                for(int i=0;i<byteArray.length;i++)
-                {
-                    byte temp=byteArray[i];
-                    byteArray[i]=byteArray[i+1];
-                    byteArray[i+1] =temp;
+            } else if (byteArray[0] == -2 && byteArray[1] == -1) {
+                for (int i = 0; i < byteArray.length; i++) {
+                    byte temp = byteArray[i];
+                    byteArray[i] = byteArray[i + 1];
+                    byteArray[i + 1] = temp;
                     i++;
                 }
 
 
                 byte[] newArray = new byte[byteArray.length - 2];
-                System.arraycopy(byteArray,2,newArray,0,newArray.length);
+                System.arraycopy(byteArray, 2, newArray, 0, newArray.length);
                 byteArray = newArray;
             }
         }
@@ -317,7 +328,6 @@ public class Utilities {
         return str;
     }
 
-
     /**
      * 将byte[]数组的数据进行翻转
      * @param reverse 等待反转的字符串
@@ -341,8 +351,8 @@ public class Utilities {
 
     /**
      * 将字节数组转换成十六进制的字符串形式
-     * @param bytes
-     * @return
+     * @param bytes 原始的字节数组
+     * @return 字符串信息
      */
     public static String bytes2HexString(byte[] bytes) {
         char[] buf = new char[bytes.length * 2];
@@ -353,5 +363,17 @@ public class Utilities {
         }
 
         return new String(buf);
+    }
+
+    /**
+     * 获取指定时间的指定格式的字符串
+     * @param date 指定的时间
+     * @param format 指定的格式
+     * @return 最后字符串信息
+     */
+    public static String getStringDateShort(Date date,String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        String dateString = formatter.format(date);
+        return dateString;
     }
 }

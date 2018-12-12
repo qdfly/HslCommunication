@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET451</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\HslCommunication.xml</DocumentationFile>
@@ -27,13 +27,18 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET451</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\HslCommunication.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicFramework\SharpList.cs" />
     <Compile Include="Algorithms\ConnectPool\ConnectPool.cs" />
     <Compile Include="Algorithms\ConnectPool\IConnector.cs" />
     <Compile Include="Algorithms\Fourier\FFTHelper.cs" />
@@ -85,6 +91,7 @@
     <Compile Include="BasicFramework\SoftAuthorize.cs" />
     <Compile Include="BasicFramework\SoftBaseClass.cs" />
     <Compile Include="BasicFramework\SoftBasic.cs" />
+    <Compile Include="BasicFramework\SoftBuffer.cs" />
     <Compile Include="BasicFramework\SoftCache.cs" />
     <Compile Include="BasicFramework\SoftException.cs" />
     <Compile Include="BasicFramework\SoftMail.cs" />
@@ -95,6 +102,12 @@
     <Compile Include="BasicFramework\SoftSqlOperate.cs" />
     <Compile Include="BasicFramework\SoftVersion.cs" />
     <Compile Include="BasicFramework\SoftZipped.cs" />
+    <Compile Include="Controls\UserBottle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UserBottle.Designer.cs">
+      <DependentUpon>UserBottle.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UserButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -112,6 +125,12 @@
     </Compile>
     <Compile Include="Controls\UserCurve.Designer.cs">
       <DependentUpon>UserCurve.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UserDrum.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UserDrum.Designer.cs">
+      <DependentUpon>UserDrum.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\UserGaugeChart.cs">
       <SubType>UserControl</SubType>
@@ -131,6 +150,12 @@
     <Compile Include="Controls\UserPieChart.Designer.cs">
       <DependentUpon>UserPieChart.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UserPipe.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UserPipe.Designer.cs">
+      <DependentUpon>UserPipe.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UserSwitch.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -145,6 +170,7 @@
     </Compile>
     <Compile Include="Core\Address\DeviceAddressBase.cs" />
     <Compile Include="Core\IMessage\AlienMessage.cs" />
+    <Compile Include="Core\IMessage\AllenBradleyMessage.cs" />
     <Compile Include="Core\IMessage\EFORTMessage.cs" />
     <Compile Include="Core\IMessage\FetchWriteMessage.cs" />
     <Compile Include="Core\IMessage\FinsMessage.cs" />
@@ -176,6 +202,7 @@
     <Compile Include="Core\Thread\ThreadLock.cs" />
     <Compile Include="Core\Transfer\ByteTransformBase.cs" />
     <Compile Include="Core\Transfer\ByteTransformHelper.cs" />
+    <Compile Include="Core\Transfer\DataFormat.cs" />
     <Compile Include="Core\Transfer\IByteTransform.cs" />
     <Compile Include="Core\Transfer\RegularByteTransform.cs" />
     <Compile Include="Core\Transfer\ReverseBytesTransform.cs" />
@@ -199,11 +226,16 @@
     <Compile Include="Enthernet\PushNet\NetPushClient.cs" />
     <Compile Include="Enthernet\PushNet\NetPushServer.cs" />
     <Compile Include="Enthernet\PushNet\PushGroupClient.cs" />
+    <Compile Include="Enthernet\Redis\RedisHelper.cs" />
+    <Compile Include="Enthernet\Redis\RedisSubscribe.cs" />
     <Compile Include="Enthernet\SimplifyNet\NetSimplifyClient.cs" />
     <Compile Include="Enthernet\SimplifyNet\NetSimplifyServer.cs" />
     <Compile Include="Enthernet\SoftUpdateNet\ClassSoftUpdate.cs" />
     <Compile Include="Enthernet\UdpNet\NetUdpClient.cs" />
     <Compile Include="Enthernet\UdpNet\NetUdpServer.cs" />
+    <Compile Include="Instrument\Temperature\DAM3601.cs" />
+    <Compile Include="Language\DefaultLanguage.cs" />
+    <Compile Include="Language\English.cs" />
     <Compile Include="LogNet\Core\ILogNet.cs" />
     <Compile Include="LogNet\Core\LogBase.cs" />
     <Compile Include="LogNet\Core\Types.cs" />
@@ -224,6 +256,7 @@
       <DependentUpon>LogNetAnalysisControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ModBus\ModbusAddress.cs" />
+    <Compile Include="ModBus\ModbusAscii\ModbusAscii.cs" />
     <Compile Include="ModBus\ModbusInfo.cs" />
     <Compile Include="ModBus\ModBusMonitorAddress.cs" />
     <Compile Include="ModBus\ModbusRtu\ModbusRtu.cs" />
@@ -232,17 +265,23 @@
     <Compile Include="ModBus\ModbusTcp\ModbusTcpServer.cs" />
     <Compile Include="ModBus\MonitorAddress.cs" />
     <Compile Include="NamespaceDoc.cs" />
+    <Compile Include="Profinet\AllenBradley\AllenBradleyHelper.cs" />
+    <Compile Include="Profinet\AllenBradley\AllenBradleyNet.cs" />
     <Compile Include="Profinet\Melsec\MelsecA1EDataType.cs" />
     <Compile Include="Profinet\Melsec\MelsecA1ENet.cs" />
+    <Compile Include="Profinet\Melsec\MelsecFxLinks.cs" />
+    <Compile Include="Profinet\Melsec\MelsecHelper.cs" />
     <Compile Include="Profinet\Melsec\MelsecMcAsciiNet.cs" />
     <Compile Include="Profinet\Melsec\MelsecMcDataType.cs" />
     <Compile Include="Profinet\Melsec\MelsecMcNet.cs" />
     <Compile Include="Profinet\Melsec\MelsecNetMultiAsync.cs" />
+    <Compile Include="Profinet\Melsec\MelsecFxSerial.cs" />
     <Compile Include="Profinet\Omron\OmronFinsDataType.cs" />
     <Compile Include="Profinet\Omron\OmronFinsNet.cs" />
-    <Compile Include="Profinet\Omron\OmronInfo.cs" />
+    <Compile Include="Profinet\Panasonic\PanasonicMewtocol.cs" />
     <Compile Include="Profinet\Siemens\SiemensFetchWriteNet.cs" />
     <Compile Include="Profinet\Siemens\SiemensPLCS.cs" />
+    <Compile Include="Profinet\Siemens\SiemensPPI.cs" />
     <Compile Include="Profinet\Siemens\SiemensS7Net.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -250,10 +289,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Enthernet\Redis\RedisClient.cs" />
     <Compile Include="Robot\EFORT\EfortData.cs" />
     <Compile Include="Robot\EFORT\ER7BC10.cs" />
     <Compile Include="Serial\CRCSupport.cs" />
-    <Compile Include="Serial\SerialCommunicationBase.cs" />
+    <Compile Include="Serial\FP1_C72.cs" />
+    <Compile Include="Serial\SerialBase.cs" />
+    <Compile Include="Serial\SerialDeviceBase.cs" />
+    <Compile Include="Serial\SoftLRC.cs" />
     <Compile Include="StringResources.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +315,9 @@
     <EmbeddedResource Include="BasicFramework\FormSupport.resx">
       <DependentUpon>FormSupport.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UserBottle.resx">
+      <DependentUpon>UserBottle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\UserButton.resx">
       <DependentUpon>UserButton.cs</DependentUpon>
     </EmbeddedResource>
@@ -281,6 +327,9 @@
     <EmbeddedResource Include="Controls\UserCurve.resx">
       <DependentUpon>UserCurve.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UserDrum.resx">
+      <DependentUpon>UserDrum.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\UserGaugeChart.resx">
       <DependentUpon>UserGaugeChart.cs</DependentUpon>
     </EmbeddedResource>
@@ -289,6 +338,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UserPieChart.resx">
       <DependentUpon>UserPieChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UserPipe.resx">
+      <DependentUpon>UserPipe.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UserSwitch.resx">
       <DependentUpon>UserSwitch.cs</DependentUpon>
@@ -350,8 +402,6 @@
     <None Include="imgaes\abstr1.png" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Profinet\AllenBradley\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -111,14 +111,9 @@ namespace HslCommunication.Enthernet
             if (!receiveBack.IsSuccess) return receiveBack;
 
             OperateResult result = new OperateResult( );
-            if (receiveBack.Content1 == 1)
-            {
-                result.IsSuccess = true;
-            }
-            else
-            {
-                result.Message = receiveBack.Message;
-            }
+
+            if (receiveBack.Content1 == 1) result.IsSuccess = true;
+            result.Message = receiveBack.Message;
 
             socketResult.Content?.Close( );
             return result;
@@ -177,10 +172,8 @@ namespace HslCommunication.Enthernet
             else
             {
                 socketResult.Content?.Close( );
-                LogNet?.WriteError( ToString(), "Not supported data type!" );
-                return new OperateResult( ) {
-                    Message = "不支持的数据类型"
-                };
+                LogNet?.WriteError( ToString(), StringResources.Language.NotSupportedDataType );
+                return new OperateResult( StringResources.Language.NotSupportedDataType );
             }
 
             socketResult.Content?.Close( );
@@ -249,11 +242,8 @@ namespace HslCommunication.Enthernet
             else
             {
                 socketResult.Content?.Close( );
-                LogNet?.WriteError( ToString( ), "数据源格式不正确！" );
-                return new OperateResult( )
-                {
-                    Message = "数据源格式不正确！",
-                };
+                LogNet?.WriteError( ToString( ), StringResources.Language.DataSourseFormatError );
+                return new OperateResult( StringResources.Language.DataSourseFormatError );
             }
             
 
@@ -267,10 +257,7 @@ namespace HslCommunication.Enthernet
             }
             else
             {
-                return new OperateResult( )
-                {
-                    Message = "服务器确认文件失败，请重新上传！",
-                };
+                return new OperateResult( StringResources.Language.ServerFileCheckFailed );
             }
         }
 

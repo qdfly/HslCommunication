@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HslCommunication.BasicFramework
 {
-    
+
     /*****************************************************************************
      * 
      *    一些类的基类，实现一些共同的基础功能
@@ -32,25 +32,25 @@ namespace HslCommunication.BasicFramework
         /// 获取需要保存的数据，需要重写实现
         /// </summary>
         /// <returns>需要存储的信息</returns>
-        string ToSaveString();
+        string ToSaveString( );
 
         /// <summary>
         /// 从字符串加载数据，需要重写实现
         /// </summary>
         /// <param name="content">字符串数据</param>
-        void LoadByString(string content);
+        void LoadByString( string content );
 
 
         /// <summary>
         /// 不使用解密方法从文件读取数据
         /// </summary>
-        void LoadByFile();
+        void LoadByFile( );
 
 
         /// <summary>
         /// 不使用加密方法保存数据到文件
         /// </summary>
-        void SaveToFile();
+        void SaveToFile( );
 
 
         /// <summary>
@@ -63,16 +63,28 @@ namespace HslCommunication.BasicFramework
     /// <summary>
     /// 文件存储功能的基类，包含了文件存储路径，存储方法等
     /// </summary>
-    public class SoftFileSaveBase
+    /// <remarks>
+    /// 需要继承才能实现你想存储的数据，比较经典的例子就是存储你的应用程序的配置信息，通常的格式就是xml文件或是json文件。具体请看例子：
+    /// </remarks>
+    /// <example>
+    /// 下面举例实现两个字段的普通数据存储
+    /// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\BasicFramework\SoftFileSaveBaseExample.cs" region="SoftFileSaveBase1" title="简单示例" />
+    /// 然后怎么调用呢？
+    /// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\BasicFramework\SoftFileSaveBaseExample.cs" region="Example" title="调用示例" />
+    /// 如果你想实现加密存储，这样就不用关心被用户看到了。
+    /// <code lang="cs" source="HslCommunication_Net45.Test\Documentation\Samples\BasicFramework\SoftFileSaveBaseExample.cs" region="SoftFileSaveBase2" title="加密示例" />
+    /// 如果还是担心被反编译获取数据，那么这个密钥就要来自服务器的数据，本地不做存储。
+    /// </example>
+    public class SoftFileSaveBase : ISoftFileSaveBase
     {
         #region Constructor
 
         /// <summary>
         /// 实例化一个文件存储的基类
         /// </summary>
-        public SoftFileSaveBase()
+        public SoftFileSaveBase( )
         {
-            HybirdLock = new SimpleHybirdLock();
+            HybirdLock = new SimpleHybirdLock( );
         }
 
         #endregion
@@ -100,7 +112,7 @@ namespace HslCommunication.BasicFramework
         /// 获取需要保存的数据，需要重写实现
         /// </summary>
         /// <returns>需要存储的信息</returns>
-        public virtual string ToSaveString()
+        public virtual string ToSaveString( )
         {
             return string.Empty;
         }
@@ -110,7 +122,7 @@ namespace HslCommunication.BasicFramework
         /// 从字符串加载数据，需要重写实现
         /// </summary>
         /// <param name="content">字符串数据</param>
-        public virtual void LoadByString(string content)
+        public virtual void LoadByString( string content )
         {
 
         }
@@ -123,9 +135,9 @@ namespace HslCommunication.BasicFramework
         /// <summary>
         /// 不使用解密方法从文件读取数据
         /// </summary>
-        public virtual void LoadByFile()
+        public virtual void LoadByFile( )
         {
-            LoadByFile(m => m);
+            LoadByFile( m => m );
         }
 
 
@@ -134,27 +146,27 @@ namespace HslCommunication.BasicFramework
         /// 使用用户自定义的解密方法从文件读取数据
         /// </summary>
         /// <param name="decrypt">用户自定义的解密方法</param>
-        public void LoadByFile(Converter<string, string> decrypt)
+        public void LoadByFile( Converter<string, string> decrypt )
         {
             if (FileSavePath != "")
             {
-                if (File.Exists(FileSavePath))
+                if (File.Exists( FileSavePath ))
                 {
-                    HybirdLock.Enter();
+                    HybirdLock.Enter( );
                     try
                     {
-                        using (StreamReader sr = new StreamReader(FileSavePath, Encoding.Default))
+                        using (StreamReader sr = new StreamReader( FileSavePath, Encoding.Default ))
                         {
-                            LoadByString(decrypt(sr.ReadToEnd()));
+                            LoadByString( decrypt( sr.ReadToEnd( ) ) );
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        ILogNet?.WriteException(LogHeaderText,StringResources.FileLoadFailed, ex);
+                        ILogNet?.WriteException( LogHeaderText, StringResources.Language.FileLoadFailed, ex );
                     }
                     finally
                     {
-                        HybirdLock.Leave();
+                        HybirdLock.Leave( );
                     }
                 }
             }
@@ -165,9 +177,9 @@ namespace HslCommunication.BasicFramework
         /// <summary>
         /// 不使用加密方法保存数据到文件
         /// </summary>
-        public virtual void SaveToFile()
+        public virtual void SaveToFile( )
         {
-            SaveToFile(m => m);
+            SaveToFile( m => m );
         }
 
 
@@ -175,26 +187,26 @@ namespace HslCommunication.BasicFramework
         /// 使用用户自定义的加密方法保存数据到文件
         /// </summary>
         /// <param name="encrypt">用户自定义的加密方法</param>
-        public void SaveToFile(Converter<string, string> encrypt)
+        public void SaveToFile( Converter<string, string> encrypt )
         {
             if (FileSavePath != "")
             {
-                HybirdLock.Enter();
+                HybirdLock.Enter( );
                 try
                 {
-                    using (StreamWriter sw = new StreamWriter(FileSavePath, false, Encoding.Default))
+                    using (StreamWriter sw = new StreamWriter( FileSavePath, false, Encoding.Default ))
                     {
-                        sw.Write(encrypt(ToSaveString()));
-                        sw.Flush();
+                        sw.Write( encrypt( ToSaveString( ) ) );
+                        sw.Flush( );
                     }
                 }
                 catch (Exception ex)
                 {
-                    ILogNet?.WriteException(LogHeaderText,StringResources.FileSaveFailed, ex);
+                    ILogNet?.WriteException( LogHeaderText, StringResources.Language.FileSaveFailed, ex );
                 }
                 finally
                 {
-                    HybirdLock.Leave();
+                    HybirdLock.Leave( );
                 }
             }
         }
@@ -212,7 +224,7 @@ namespace HslCommunication.BasicFramework
         /// <summary>
         /// 日志记录类
         /// </summary>
-        public LogNet.ILogNet ILogNet { get; set; } 
+        public LogNet.ILogNet ILogNet { get; set; }
 
 
     }

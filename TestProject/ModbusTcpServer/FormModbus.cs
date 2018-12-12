@@ -39,8 +39,24 @@ namespace ModbusTcpServer
             panel2.Enabled = false;
 
 
-            checkBox2.CheckedChanged += CheckBox2_CheckedChanged;
+            comboBox2.SelectedIndex = 0;
+            comboBox2.SelectedIndexChanged += ComboBox2_SelectedIndexChanged;
             checkBox3.CheckedChanged += CheckBox3_CheckedChanged;
+        }
+
+        private void ComboBox2_SelectedIndexChanged( object sender, EventArgs e )
+        {
+            if (busTcpServer != null)
+            {
+                switch (comboBox2.SelectedIndex)
+                {
+                    case 0: busTcpServer.DataFormat = HslCommunication.Core.DataFormat.ABCD; break;
+                    case 1: busTcpServer.DataFormat = HslCommunication.Core.DataFormat.BADC; break;
+                    case 2: busTcpServer.DataFormat = HslCommunication.Core.DataFormat.CDAB; break;
+                    case 3: busTcpServer.DataFormat = HslCommunication.Core.DataFormat.DCBA; break;
+                    default: break;
+                }
+            }
         }
 
         private void CheckBox3_CheckedChanged( object sender, EventArgs e )
@@ -50,15 +66,7 @@ namespace ModbusTcpServer
                 busTcpServer.IsStringReverse = checkBox3.Checked;
             }
         }
-
-        private void CheckBox2_CheckedChanged( object sender, EventArgs e )
-        {
-            if (busTcpServer != null)
-            {
-                busTcpServer.IsMultiWordReverse = checkBox2.Checked;
-            }
-        }
-
+        
         private System.Windows.Forms.Timer timerSecond;
 
         private void FormSiemens_FormClosing( object sender, FormClosingEventArgs e )
@@ -110,14 +118,17 @@ namespace ModbusTcpServer
                 busTcpServer.LogNet = new HslCommunication.LogNet.LogNetSingle( "logs.txt" );        // 配置日志信息
                 busTcpServer.LogNet.BeforeSaveToFile += LogNet_BeforeSaveToFile;
                 busTcpServer.OnDataReceived += BusTcpServer_OnDataReceived;
-                busTcpServer.IsMultiWordReverse = checkBox2.Checked;
+
+                ComboBox2_SelectedIndexChanged( null, new EventArgs( ) );
                 busTcpServer.IsStringReverse = checkBox3.Checked;
                 busTcpServer.ServerStart( port );
 
                 button1.Enabled = false;
                 panel2.Enabled = true;
                 button4.Enabled = true;
+                button11.Enabled = true;
 
+                timerSecond?.Dispose( );
                 timerSecond = new System.Windows.Forms.Timer( );
                 timerSecond.Interval = 1000;
                 timerSecond.Tick += TimerSecond_Tick;
@@ -127,6 +138,15 @@ namespace ModbusTcpServer
             {
                 MessageBox.Show( ex.Message );
             }
+        }
+
+
+        private void button11_Click( object sender, EventArgs e )
+        {
+            // 停止服务
+            busTcpServer?.ServerClose( );
+            button1.Enabled = true;
+            button11.Enabled = false;
         }
 
         private void TimerSecond_Tick( object sender, EventArgs e )
@@ -545,23 +565,25 @@ namespace ModbusTcpServer
 
 
 
-
+        private string timerAddress = string.Empty;
         private ushort timerValue = 0;
         private System.Windows.Forms.Timer timerWrite = null;
         private void button10_Click( object sender, EventArgs e )
         {
             // 定时写
             timerWrite = new System.Windows.Forms.Timer( );
-            timerWrite.Interval = 1000;
+            timerWrite.Interval = 300;
             timerWrite.Tick += TimerWrite_Tick;
             timerWrite.Start( );
+            timerAddress = textBox8.Text;
             button10.Enabled = false;
         }
 
         private void TimerWrite_Tick( object sender, EventArgs e )
         {
-            busTcpServer.Write( textBox8.Text, timerValue );
+            busTcpServer.Write( timerAddress, timerValue );
             timerValue++;
         }
+
     }
 }

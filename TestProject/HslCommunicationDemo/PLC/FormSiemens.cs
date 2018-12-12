@@ -18,11 +18,13 @@ namespace HslCommunicationDemo
         public FormSiemens( SiemensPLCS siemensPLCS )
         {
             InitializeComponent( );
+            siemensPLCSelected = siemensPLCS;
             siemensTcpNet = new SiemensS7Net( siemensPLCS );
         }
 
 
         private SiemensS7Net siemensTcpNet = null;
+        private SiemensPLCS siemensPLCSelected = SiemensPLCS.S1200;
 
         private void linkLabel1_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e )
         {
@@ -40,8 +42,104 @@ namespace HslCommunicationDemo
         {
             panel2.Enabled = false;
             userCurve1.SetLeftCurve( "A", new float[0], Color.Tomato );
+
+            Language( Program.Language );
+
+            if (!Program.ShowAuthorInfomation)
+            {
+                label2.Visible = false;
+                linkLabel1.Visible = false;
+                label20.Visible = false;
+            }
+
+            if (siemensPLCSelected == SiemensPLCS.S400)
+            {
+                textBox15.Text = "0";
+                textBox16.Text = "3";
+            }
+            else if(siemensPLCSelected == SiemensPLCS.S1200)
+            {
+                textBox15.Text = "0";
+                textBox16.Text = "0";
+            }
+            else if (siemensPLCSelected == SiemensPLCS.S300)
+            {
+                textBox15.Text = "0";
+                textBox16.Text = "2";
+            }
+            else if (siemensPLCSelected == SiemensPLCS.S1500)
+            {
+                textBox15.Text = "0";
+                textBox16.Text = "0";
+            }
         }
 
+        private void Language( int language )
+        {
+            if (language == 2)
+            {
+                Text = "Siemens Read PLC Demo";
+                label2.Text = "Blogs:";
+                label4.Text = "Protocols:";
+                label20.Text = "Author:Richard Hu";
+                label5.Text = "S7";
+
+                label1.Text = "Ip:";
+                label3.Text = "Port:";
+                button1.Text = "Connect";
+                button2.Text = "Disconnect";
+                label21.Text = "Address:";
+                label6.Text = "address:";
+                label7.Text = "result:";
+
+                button_read_bool.Text = "Read Bit";
+                button_read_byte.Text = "r-byte";
+                button_read_short.Text = "r-short";
+                button_read_ushort.Text = "r-ushort";
+                button_read_int.Text = "r-int";
+                button_read_uint.Text = "r-uint";
+                button_read_long.Text = "r-long";
+                button_read_ulong.Text = "r-ulong";
+                button_read_float.Text = "r-float";
+                button_read_double.Text = "r-double";
+                button_read_string.Text = "r-string";
+                label8.Text = "length:";
+                label11.Text = "Address:";
+                label12.Text = "length:";
+                button25.Text = "Bulk Read";
+                label13.Text = "Results:";
+                label16.Text = "Message:";
+                label14.Text = "Results:";
+                button26.Text = "Read";
+
+                label10.Text = "Address:";
+                label9.Text = "Value:";
+                label19.Text = "Note: The value of the string needs to be converted";
+                button24.Text = "Write Bit";
+                button22.Text = "w-short";
+                button21.Text = "w-ushort";
+                button20.Text = "w-int";
+                button19.Text = "w-uint";
+                button18.Text = "w-long";
+                button17.Text = "w-ulong";
+                button16.Text = "w-float";
+                button15.Text = "w-double";
+                button14.Text = "w-string";
+
+                groupBox1.Text = "Single Data Read test";
+                groupBox2.Text = "Single Data Write test";
+                groupBox3.Text = "Bulk Read test";
+                groupBox4.Text = "Message reading test, hex string needs to be filled in";
+                groupBox5.Text = "Timed reading, curve display";
+
+                button3.Text = "Pressure test, r/w 3,000s";
+                label15.Text = "Address:";
+                label18.Text = "Interval";
+                button27.Text = "Start";
+                label17.Text = "This assumes that the type of data is determined for short:";
+                button23.Text = "w-byte";
+            }
+        }
         private void FormSiemens_FormClosing( object sender, FormClosingEventArgs e )
         {
             isThreadRun = false;
@@ -98,9 +196,15 @@ namespace HslCommunicationDemo
             }
 
             siemensTcpNet.IpAddress = textBox1.Text;
-
             try
             {
+                if (siemensPLCSelected != SiemensPLCS.S200Smart)
+                {
+                    siemensTcpNet.Rack = byte.Parse( textBox15.Text );
+                    siemensTcpNet.Slot = byte.Parse( textBox16.Text );
+                }
+
+
                 OperateResult connect = siemensTcpNet.ConnectServer( );
                 if (connect.IsSuccess)
                 {
@@ -226,6 +330,12 @@ namespace HslCommunicationDemo
             // byte写入
             try
             {
+                //byte[] buffer = new byte[500];
+                //for (int i = 0; i < 500; i++)
+                //{
+                //    buffer[i] = (byte)i;
+                //}
+                //writeResultRender( siemensTcpNet.Write( textBox8.Text, buffer ), textBox8.Text );
                 writeResultRender( siemensTcpNet.Write( textBox8.Text, byte.Parse( textBox7.Text ) ), textBox8.Text );
             }
             catch (Exception ex)
@@ -381,6 +491,20 @@ namespace HslCommunicationDemo
         }
 
 
+
+        private void button3_Click( object sender, EventArgs e )
+        {
+            // 订货号
+            OperateResult<string> read = siemensTcpNet.ReadOrderNumber( );
+            if (read.IsSuccess)
+            {
+                textBox10.Text = "订货号：" + read.Content;
+            }
+            else
+            {
+                MessageBox.Show( "读取失败：" + read.ToMessageShowString( ) );
+            }
+        }
 
         #endregion
 
@@ -567,5 +691,47 @@ namespace HslCommunicationDemo
         }
 
         #endregion
+
+        private void button4_Click( object sender, EventArgs e )
+        {
+            // 热启动
+            OperateResult result = siemensTcpNet.HotStart( );
+            if (result.IsSuccess)
+            {
+                MessageBox.Show( "Success" );
+            }
+            else
+            {
+                MessageBox.Show( "Failed: " + result.Message );
+            }
+        }
+
+        private void button5_Click( object sender, EventArgs e )
+        {
+            // 冷启动
+            OperateResult result = siemensTcpNet.ColdStart( );
+            if (result.IsSuccess)
+            {
+                MessageBox.Show( "Success" );
+            }
+            else
+            {
+                MessageBox.Show( "Failed: " + result.Message );
+            }
+        }
+
+        private void button6_Click( object sender, EventArgs e )
+        {
+            // 停止
+            OperateResult result = siemensTcpNet.Stop( );
+            if (result.IsSuccess)
+            {
+                MessageBox.Show( "Success" );
+            }
+            else
+            {
+                MessageBox.Show( "Failed: " + result.Message );
+            }
+        }
     }
 }
